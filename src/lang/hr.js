@@ -70,6 +70,7 @@ export default {
 	remiseOrdre: 'Preurediti',
 	//new modules
 	poll: 'Umfrage',
+	ampel: 'Ampel',
 	heures: 'Sati',
 	minutes: 'Minute',
 	secondes: 'Sekunde',
@@ -120,6 +121,10 @@ export default {
 	exporter: 'Izvoz',
 	importerEcran: 'Uvezite zaslon',
 	exporterEcran: 'Izvezite ovaj zaslon',
+	exporterPDF: 'Export as PDF',
+	logoPersonnalise: 'Custom Logo',
+	logoTeleverser: 'Upload Logo',
+	logoSupprimer: 'Remove Logo',
 	modules: 'Moduli',
 	tirageSortTexte: 'Slučajni crtež teksta',
 	tirageSortImage: 'Slučajni crtež slike',
@@ -190,6 +195,15 @@ export default {
 	galerieImages: 'Galerija slika',
 	texteGalerie: 'Slike galerije',
 	label: 'Etiketa',
-	cstRsInfo: 'This is a customized version of Digiscreen by teacher Richard Scheglmann. More information on:'
-
+	cstRsInfo: 'This is a customized version of Digiscreen by teacher Richard Scheglmann. More information on:',
+	taschenrechner: 'Kalkulator',
+	geodreieck: 'Geodreieck',
+	surligneur: 'Marker',
+	gomme: 'Gumica',
+	exporterSVG: 'Izvezi kao SVG',
+	orange: 'Narančasto',
+	violet: 'Ljubičasto',
+	marron: 'Smeđe',
+	rose: 'Ružičasto',
+	snap: 'Prikvači na rub'
 }

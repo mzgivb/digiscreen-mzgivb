@@ -24,7 +24,7 @@
 <script>
 import VueDragResize from 'vue-drag-resize'
 import Panneau from '@/panneau'
-import Calendar from 'v-calendar/lib/components/calendar.umd'
+import { Calendar } from 'v-calendar'
 
 export default {
 	name: 'PCalendrier',

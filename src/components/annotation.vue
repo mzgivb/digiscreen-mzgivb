@@ -1,6 +1,6 @@
 <template>
 	<transition-group name="fondu">
-		<div id="annotation" :class="{'curseur': this.outilDeplacer, 'avec-nav': nav}" key="canva">
+		<div id="annotation" :class="{'curseur': this.outilDeplacer, 'gomme': this.outilGomme, 'avec-nav': nav}" key="canva">
 			<v-stage ref="stage" :config="{width: dimensionsCanva.w, height: dimensionsCanva.h}" @mousedown="selectionnerDebut" @touchstart="selectionnerDebut" @mousemove="selectionnerMouvement" @touchmove="selectionnerMouvement" @mouseup="selectionnerFin" @touchend="selectionnerFin">
 				<v-layer ref="objets">
 					<template v-for="(item, indexItem) in items">
@@ -15,7 +15,7 @@
 							<v-tag :config="item.tag" />
 							<v-text :config="item.text" />
 						</v-label>
-						<v-line :config="item" v-else-if="item.objet === 'dessin'" @dragstart="selectionnerObjet" @dragend="deplacerFin" :key="'dessin_' + indexItem" />
+						<v-line :config="item" v-else-if="item.objet === 'dessin' || item.objet === 'surligneur-dessin'" @dragstart="selectionnerObjet" @dragend="deplacerFin" :key="'dessin_' + indexItem" />
 					</template>
 					<v-rect :config="{name: 'selection', fill: 'rgba(1, 206, 209, 0.2)', visible: selection, x: positionSelectionX, y: positionSelectionY, width: largeurSelection, height: hauteurSelection}" @dragend="deplacerFin" @transformend="redimensionnerFin" />
 					<v-rect :config="{name: 'objet-rectangle', fill: 'transparent', visible: creation && outil === 'rectangle', x: positionObjetX, y: positionObjetY, width: largeurObjet, height: hauteurObjet, stroke: '#ff0000', strokeWidth: 3, dash: [7, 5]}" @dragend="deplacerFin" @transformend="redimensionnerFin" />
@@ -30,7 +30,10 @@
 			</v-stage>
 		</div>
 
-		<div id="outils-annotation" key="outils">
+		<div id="outils-annotation" :style="toolbarStyle" key="outils">
+			<span class="outil drag-handle" @mousedown.prevent="startToolbarDrag" @touchstart.prevent="startToolbarDrag">
+				<i class="material-icons" style="font-size: 16px;">drag_indicator</i>
+			</span>
 			<span class="outil historique" :title="$t('defaire')" @click="defaire">
 				<img src="~@/assets/img/defaire.png" :alt="$t('defaire')">
 			</span>
@@ -43,6 +46,15 @@
 			</span>
 			<span class="outil" :title="$t('dessiner')" :class="{'actif': outilDessiner}" @click="definirOutilPrincipal('dessiner')">
 				<img src="~@/assets/img/stylo.png" :alt="$t('dessiner')">
+			</span>
+			<span class="outil" :title="$t('surligneur')" :class="{'actif': outilSurligneur}" @click="definirOutilPrincipal('surligneur')">
+				<img src="~@/assets/img/surligneur.png" :alt="$t('surligneur')">
+			</span>
+			<span class="outil" :title="$t('snap')" :class="{'actif': snapActif}" @click="snapActif = !snapActif" v-if="geodreieckGeometry">
+				<i class="material-icons" style="font-size: 16px;">straighten</i>
+			</span>
+			<span class="outil" :title="$t('gomme')" :class="{'actif': outilGomme}" @click="definirOutilPrincipal('gomme')">
+				<i class="material-icons" style="font-size: 16px;">auto_fix_off</i>
 			</span>
 			<span class="outil" :title="$t('deplacer')" :class="{'actif': outilDeplacer}" @click="definirOutilPrincipal('deplacer')">
 				<img src="~@/assets/img/pan.png" :alt="$t('deplacer')">
@@ -82,12 +94,15 @@
 			<span class="outil" :title="$t('reinitialiser')" @click="afficherReinitialiser">
 				<img src="~@/assets/img/reinitialiser.png" :alt="$t('reinitialiser')">
 			</span>
+			<span class="outil" :title="$t('exporterSVG')" @click="exporterSVG">
+				<i class="material-icons" style="font-size: 16px;">file_download</i>
+			</span>
 			<span class="outil" :title="$t('fermer')" @click="$emit('fermer')">
 				<img src="~@/assets/img/fermer.png" :alt="$t('fermer')">
 			</span>
 		</div>
 
-		<div id="options" v-if="nom !== '' || (!outilSelectionner && !outilDeplacer)" key="options">
+		<div id="options" v-if="nom !== '' || (!outilSelectionner && !outilDeplacer && !outilGomme)" :style="optionsStyle" key="options">
 			<span class="option icone" :title="$t('verrouiller')" @click="verrouiller" v-if="outilSelectionner && !objetVerrouille">
 				<span><i class="material-icons">lock</i></span>
 			</span>
@@ -101,48 +116,38 @@
 				<span><i class="material-icons">flip_to_back</i></span>
 			</span>
 			<span class="separateur" v-if="outilSelectionner" />
-			<span class="option noir" :class="{'actif': outilDessiner && couleurStylo === '#000000'}" :title="$t('noir')" @click="modifierCouleur('#000000')" v-if="nom !== 'selection' && objet !== 'label'">
-				<span class="couleur noir" />
-			</span>
-			<span class="option blanc" :class="{'actif': outilDessiner && couleurStylo === '#ffffff'}" :title="$t('blanc')" @click="modifierCouleur('#ffffff')" v-if="nom !== 'selection' && objet !== 'label'">
-				<span class="couleur blanc" />
-			</span>
-			<span class="option rouge" :class="{'actif': outilDessiner && couleurStylo === '#ff0000'}" :title="$t('rouge')" @click="modifierCouleur('#ff0000')" v-if="nom !== 'selection'">
-				<span class="couleur rouge" />
-			</span>
-			<span class="option jaune" :class="{'actif': outilDessiner && couleurStylo === '#ffff00'}" :title="$t('jaune')" @click="modifierCouleur('#ffff00')" v-if="nom !== 'selection'">
-				<span class="couleur jaune" />
-			</span>
-			<span class="option vert" :class="{'actif': outilDessiner && couleurStylo === '#00ff00'}" :title="$t('vert')" @click="modifierCouleur('#00ff00')" v-if="nom !== 'selection'">
-				<span class="couleur vert" />
-			</span>
-			<span class="option bleu" :class="{'actif': outilDessiner && couleurStylo === '#04fdff'}" :title="$t('bleu')" @click="modifierCouleur('#04fdff')" v-if="nom !== 'selection'">
-				<span class="couleur bleu" />
-			</span>
+			<template v-for="c in couleursVisibles">
+				<span class="option" :key="c.nom"
+					:class="{'actif': (outilDessiner || outilSurligneur) && couleurStylo === c.hex}"
+					:title="$t(c.nom)"
+					@click="modifierCouleur(c.hex)">
+					<span class="couleur" :style="{ background: c.hex, border: c.hex === '#ffffff' ? '1px solid #ddd' : 'none' }" />
+				</span>
+			</template>
 			<span class="option icone" v-if="nom !== 'selection'" @click="definirCouleur">
 				<label for="couleur-annotation"><i class="material-icons">colorize</i></label>
 				<input type="color" id="couleur-annotation" :value="couleurSelecteur" :title="$t('selectionnerCouleur')">
 			</span>
-			<span class="separateur" v-if="outilDessiner" />
-			<span class="option label-epaisseur" v-if="outilDessiner">
+			<span class="separateur" v-if="outilDessiner || outilSurligneur" />
+			<span class="option label-epaisseur" v-if="outilDessiner || outilSurligneur">
 				<span><i class="material-icons">line_weight</i></span>
 			</span>
-			<span class="option epaisseur" :class="{'actif': epaisseurStylo === 2}" @click="modifierEpaisseur(2)" v-if="outilDessiner">
+			<span class="option epaisseur" :class="{'actif': epaisseurStylo === 2}" @click="modifierEpaisseur(2)" v-if="outilDessiner || outilSurligneur">
 				<span>2</span>
 			</span>
-			<span class="option epaisseur" :class="{'actif': epaisseurStylo === 5}" @click="modifierEpaisseur(5)" v-if="outilDessiner">
+			<span class="option epaisseur" :class="{'actif': epaisseurStylo === 5}" @click="modifierEpaisseur(5)" v-if="outilDessiner || outilSurligneur">
 				<span>5</span>
 			</span>
-			<span class="option epaisseur" :class="{'actif': epaisseurStylo === 10}" @click="modifierEpaisseur(10)" v-if="outilDessiner">
+			<span class="option epaisseur" :class="{'actif': epaisseurStylo === 10}" @click="modifierEpaisseur(10)" v-if="outilDessiner || outilSurligneur">
 				<span>10</span>
 			</span>
-			<span class="option epaisseur" :class="{'actif': epaisseurStylo === 20}" @click="modifierEpaisseur(20)" v-if="outilDessiner">
+			<span class="option epaisseur" :class="{'actif': epaisseurStylo === 20}" @click="modifierEpaisseur(20)" v-if="outilDessiner || outilSurligneur">
 				<span>20</span>
 			</span>
-			<span class="option epaisseur" :class="{'actif': epaisseurStylo === 40}" @click="modifierEpaisseur(40)" v-if="outilDessiner">
+			<span class="option epaisseur" :class="{'actif': epaisseurStylo === 40}" @click="modifierEpaisseur(40)" v-if="outilDessiner || outilSurligneur">
 				<span>40</span>
 			</span>
-			<span class="option epaisseur" :class="{'actif': epaisseurStylo === 80}" @click="modifierEpaisseur(80)" v-if="outilDessiner">
+			<span class="option epaisseur" :class="{'actif': epaisseurStylo === 80}" @click="modifierEpaisseur(80)" v-if="outilDessiner || outilSurligneur">
 				<span>80</span>
 			</span>
 			<span class="separateur" v-if="outilSelectionner && nom !== 'selection'" />
@@ -200,6 +205,7 @@
 
 <script>
 import Konva from 'konva'
+import { saveAs } from 'file-saver'
 
 export default {
 	name: 'Annotation',
@@ -208,7 +214,11 @@ export default {
 		annotations: Object,
 		largeur: Number,
 		hauteur: Number,
-		nav: Boolean
+		nav: Boolean,
+		geodreieckGeometry: {
+			type: Object,
+			default: null
+		}
 	},
 	data () {
 		return {
@@ -223,6 +233,24 @@ export default {
 			outilSelectionner: true,
 			outilDeplacer: false,
 			outilDessiner: false,
+			outilSurligneur: false,
+			outilGomme: false,
+			couleurs: [
+				{ nom: 'noir', hex: '#000000' },
+				{ nom: 'blanc', hex: '#ffffff' },
+				{ nom: 'rouge', hex: '#ff0000' },
+				{ nom: 'bleu', hex: '#0000ff' },
+				{ nom: 'vert', hex: '#00ff00' },
+				{ nom: 'jaune', hex: '#ffff00' },
+				{ nom: 'orange', hex: '#ff8800' },
+				{ nom: 'violet', hex: '#9900ff' },
+				{ nom: 'marron', hex: '#8B4513' },
+				{ nom: 'rose', hex: '#ff69b4' }
+			],
+			toolbarX: null,
+			toolbarY: null,
+			toolbarDragging: false,
+			toolbarDragStart: { x: 0, y: 0 },
 			items: [],
 			dessin: false,
 			historique: [],
@@ -245,7 +273,29 @@ export default {
 			positionObjetX: 0,
 			positionObjetY: 0,
 			largeurObjet: 0,
-			hauteurObjet: 0
+			hauteurObjet: 0,
+			snapActif: false
+		}
+	},
+	computed: {
+		toolbarStyle () {
+			if (this.toolbarX !== null) {
+				return { position: 'fixed', left: this.toolbarX + 'px', top: this.toolbarY + 'px' }
+			}
+			return {}
+		},
+		couleursVisibles () {
+			if (this.nom === 'selection') return []
+			if (this.objet === 'label') {
+				return this.couleurs.filter(c => c.hex !== '#000000' && c.hex !== '#ffffff')
+			}
+			return this.couleurs
+		},
+		optionsStyle () {
+			if (this.toolbarX !== null) {
+				return { position: 'fixed', left: (this.toolbarX + 40) + 'px', top: this.toolbarY + 'px' }
+			}
+			return {}
 		}
 	},
 	watch: {
@@ -288,6 +338,24 @@ export default {
 			this.positionStylo = []
 			this.reinitialiserSelection()
 		},
+		outilSurligneur: function (valeur) {
+			if (valeur === true) {
+				this.desactiverDeplacement()
+				this.couleurStylo = '#ffff00'
+				this.epaisseurStylo = 40
+				this.couleurSelecteur = '#ffff00'
+			} else {
+				this.couleurSelecteur = '#000000'
+			}
+			this.positionStylo = []
+			this.reinitialiserSelection()
+		},
+		outilGomme: function (valeur) {
+			if (valeur === true) {
+				this.desactiverDeplacement()
+			}
+			this.reinitialiserSelection()
+		},
 		outil: function (valeur) {
 			if (valeur === '') {
 				this.activerDeplacement()
@@ -311,6 +379,14 @@ export default {
 		this.dimensionsCanva.w = rect.width
 		this.dimensionsCanva.h = rect.height
 		window.addEventListener('keydown', this.gererClavier, false)
+		const savedToolbarPos = localStorage.getItem('annotation-toolbar-pos')
+		if (savedToolbarPos) {
+			try {
+				const pos = JSON.parse(savedToolbarPos)
+				this.toolbarX = pos.x
+				this.toolbarY = pos.y
+			} catch (e) { /* ignore */ }
+		}
 	},
 	beforeDestroy () {
 		if (document.querySelector('#couleur-annotation')) {
@@ -323,6 +399,8 @@ export default {
 			this.outilSelectionner = false
 			this.outilDeplacer = false
 			this.outilDessiner = false
+			this.outilSurligneur = false
+			this.outilGomme = false
 			if (type === 'selectionner') {
 				this.outilSelectionner = true
 				this.desactiverSelecteur()
@@ -332,6 +410,12 @@ export default {
 			} else if (type === 'dessiner') {
 				this.outilDessiner = true
 				this.activerSelecteur()
+			} else if (type === 'surligneur') {
+				this.outilSurligneur = true
+				this.activerSelecteur()
+			} else if (type === 'gomme') {
+				this.outilGomme = true
+				this.desactiverSelecteur()
 			}
 		},
 		selectionnerOutil (type) {
@@ -777,6 +861,25 @@ export default {
 				this.$nextTick(function () {
 					this.$refs.objets.getNode().getLayer().batchDraw()
 				}.bind(this))
+			} else if (this.outilSurligneur) {
+				this.dessin = true
+				this.positionStylo = stage.getPointerPosition()
+				this.id++
+				this.items.push({ name: 'surl' + this.id, objet: 'surligneur-dessin', points: [this.positionStylo.x, this.positionStylo.y], stroke: this.couleurStylo, strokeWidth: this.epaisseurStylo, opacity: 0.4, lineJoin: 'round', lineCap: 'round', globalCompositeOperation: 'source-over', hitStrokeWidth: 25, draggable: false, verrouille: false })
+				this.nom = 'surl' + this.id
+				this.objet = 'surligneur-dessin'
+				this.$nextTick(function () {
+					this.$refs.objets.getNode().getLayer().batchDraw()
+				}.bind(this))
+			} else if (this.outilGomme) {
+				if (event.target !== event.target.getStage()) {
+					const nom = event.target.name()
+					if (nom) {
+						this.nom = nom
+						this.supprimer()
+						this.enregistrer()
+					}
+				}
 			}
 		},
 		selectionnerMouvement (event) {
@@ -804,13 +907,23 @@ export default {
 					this.hauteurObjet = Math.abs(this.positionY2 - this.positionY1)
 				}
 				this.transformer()
-			} else if (this.outilDessiner) {
+			} else if (this.outilDessiner || this.outilSurligneur) {
 				if (!this.dessin) {
 					return
 				}
 				this.positionStylo = stage.getPointerPosition()
+				var drawX = this.positionStylo.x
+				var drawY = this.positionStylo.y
+				if (this.snapActif && this.geodreieckGeometry) {
+					var edges = this.getGeodreieckEdges()
+					var snapped = this.snapToEdge({ x: drawX, y: drawY }, edges, 15)
+					if (snapped) {
+						drawX = snapped.x
+						drawY = snapped.y
+					}
+				}
 				const item = this.items.find(r => r.name === this.nom)
-				const points = item.points.concat([this.positionStylo.x, this.positionStylo.y])
+				const points = item.points.concat([drawX, drawY])
 				item.points = points
 				this.$refs.objets.getNode().getLayer().batchDraw()
 			}
@@ -862,7 +975,7 @@ export default {
 					this.dessinerForme(this.outil)
 					this.activerSelecteur()
 				}
-			} else if (this.outilDessiner) {
+			} else if (this.outilDessiner || this.outilSurligneur) {
 				this.dessin = false
 			}
 		},
@@ -1012,13 +1125,15 @@ export default {
 			this.enregistrer()
 		},
 		definirCouleurSelecteur (objet, item) {
+			const couleursPreset = this.couleurs.map(c => c.hex).concat(['#04fdff', '#cccccc'])
 			switch (objet) {
 			case 'rectangle':
 			case 'cercle':
 			case 'ligne':
 			case 'fleche':
 			case 'dessin':
-				if (['#000000', '#ffffff', '#ff0000', '#ffff00', '#00ff00', '#04fdff', '#cccccc'].includes(item.stroke) === false) {
+			case 'surligneur-dessin':
+				if (couleursPreset.includes(item.stroke) === false) {
 					this.couleurSelecteur = item.stroke
 				}
 				break
@@ -1027,12 +1142,12 @@ export default {
 			case 'etoile':
 			case 'surlignage':
 			case 'texte':
-				if (['#000000', '#ffffff', '#ff0000', '#ffff00', '#00ff00', '#04fdff', '#cccccc'].includes(item.fill) === false) {
+				if (couleursPreset.includes(item.fill) === false) {
 					this.couleurSelecteur = item.fill
 				}
 				break
 			case 'label':
-				if (['#000000', '#ffffff', '#ff0000', '#ffff00', '#00ff00', '#04fdff', '#cccccc'].includes(item.tag.fill) === false) {
+				if (couleursPreset.includes(item.tag.fill) === false) {
 					this.couleurSelecteur = item.tag.fill
 				}
 				break
@@ -1040,9 +1155,9 @@ export default {
 		},
 		definirCouleur () {
 			const couleur = document.querySelector('#couleur-annotation').value
-			if (this.outilDessiner && this.couleurSelecteur !== '#000000') {
+			if ((this.outilDessiner || this.outilSurligneur) && this.couleurSelecteur !== '#000000') {
 				this.couleurStylo = couleur
-			} else if (!this.outilDessiner && this.couleurSelecteur !== '#000000') {
+			} else if (!this.outilDessiner && !this.outilSurligneur && this.couleurSelecteur !== '#000000') {
 				this.modifierCouleur(couleur)
 			}
 		},
@@ -1060,6 +1175,7 @@ export default {
 				case 'rectangle':
 				case 'cercle':
 				case 'dessin':
+				case 'surligneur-dessin':
 					item.stroke = couleur
 					break
 				case 'rectangle-plein':
@@ -1079,7 +1195,7 @@ export default {
 					item.tag.fill = couleur
 					break
 				}
-			} else if (this.outilDessiner) {
+			} else if (this.outilDessiner || this.outilSurligneur) {
 				this.couleurStylo = couleur
 			}
 			this.enregistrer()
@@ -1288,6 +1404,179 @@ export default {
 				}
 			}.bind(this))
 		},
+		startToolbarDrag (event) {
+			const e = event.touches ? event.touches[0] : event
+			const toolbar = document.querySelector('#outils-annotation')
+			const rect = toolbar.getBoundingClientRect()
+			this.toolbarDragging = true
+			this.toolbarDragStart = { x: e.clientX - rect.left, y: e.clientY - rect.top }
+			document.addEventListener('mousemove', this.onToolbarDrag)
+			document.addEventListener('mouseup', this.stopToolbarDrag)
+			document.addEventListener('touchmove', this.onToolbarDrag)
+			document.addEventListener('touchend', this.stopToolbarDrag)
+		},
+		onToolbarDrag (event) {
+			if (!this.toolbarDragging) return
+			const e = event.touches ? event.touches[0] : event
+			this.toolbarX = e.clientX - this.toolbarDragStart.x
+			this.toolbarY = e.clientY - this.toolbarDragStart.y
+		},
+		stopToolbarDrag () {
+			this.toolbarDragging = false
+			document.removeEventListener('mousemove', this.onToolbarDrag)
+			document.removeEventListener('mouseup', this.stopToolbarDrag)
+			document.removeEventListener('touchmove', this.onToolbarDrag)
+			document.removeEventListener('touchend', this.stopToolbarDrag)
+			if (this.toolbarX !== null) {
+				localStorage.setItem('annotation-toolbar-pos', JSON.stringify({ x: this.toolbarX, y: this.toolbarY }))
+			}
+		},
+		genererPointsEtoile (numPoints, innerRadius, outerRadius) {
+			const points = []
+			for (let i = 0; i < numPoints * 2; i++) {
+				const r = i % 2 === 0 ? outerRadius : innerRadius
+				const angle = (Math.PI / numPoints) * i - Math.PI / 2
+				points.push(Math.cos(angle) * r, Math.sin(angle) * r)
+			}
+			return points
+		},
+		exporterSVG () {
+			const w = this.dimensionsCanva.w
+			const h = this.dimensionsCanva.h
+			let defs = ''
+			let elements = ''
+			let arrowId = 0
+			this.items.forEach(function (item) {
+				if (item.objet === 'ancre') return
+				const sx = item.scaleX || 1
+				const sy = item.scaleY || 1
+				switch (item.objet) {
+				case 'dessin':
+				case 'surligneur-dessin': {
+					const pts = []
+					for (let i = 0; i < item.points.length; i += 2) {
+						pts.push(item.points[i] + ',' + item.points[i + 1])
+					}
+					const opacity = item.opacity ? ' opacity="' + item.opacity + '"' : ''
+					elements += '<polyline points="' + pts.join(' ') + '" stroke="' + (item.stroke || 'none') + '" stroke-width="' + (item.strokeWidth || 2) + '" fill="none" stroke-linejoin="round" stroke-linecap="round"' + opacity + '/>\n'
+					break
+				}
+				case 'rectangle':
+					elements += '<rect x="' + item.x + '" y="' + item.y + '" width="' + (item.width * sx) + '" height="' + (item.height * sy) + '" stroke="' + item.stroke + '" stroke-width="' + (item.strokeWidth || 3) + '" fill="none"/>\n'
+					break
+				case 'rectangle-plein':
+				case 'surlignage':
+					elements += '<rect x="' + item.x + '" y="' + item.y + '" width="' + (item.width * sx) + '" height="' + (item.height * sy) + '" fill="' + item.fill + '" opacity="' + (item.opacity || 1) + '"/>\n'
+					break
+				case 'cercle':
+					elements += '<ellipse cx="' + item.x + '" cy="' + item.y + '" rx="' + ((item.width / 2) * sx) + '" ry="' + ((item.height / 2) * sy) + '" stroke="' + item.stroke + '" stroke-width="' + (item.strokeWidth || 3) + '" fill="none"/>\n'
+					break
+				case 'cercle-plein':
+					elements += '<ellipse cx="' + item.x + '" cy="' + item.y + '" rx="' + ((item.width / 2) * sx) + '" ry="' + ((item.height / 2) * sy) + '" fill="' + (item.fill || '#cccccc') + '" opacity="' + (item.opacity || 1) + '"/>\n'
+					break
+				case 'etoile': {
+					const starPts = this.genererPointsEtoile(item.numPoints || 5, item.innerRadius || 20, item.outerRadius || 45)
+					const polyPts = []
+					for (let i = 0; i < starPts.length; i += 2) {
+						polyPts.push((starPts[i] * sx + item.x) + ',' + (starPts[i + 1] * sy + item.y))
+					}
+					elements += '<polygon points="' + polyPts.join(' ') + '" fill="' + (item.fill || '#ffff00') + '" stroke="' + (item.stroke || 'black') + '" stroke-width="' + (item.strokeWidth || 3) + '"/>\n'
+					break
+				}
+				case 'ligne': {
+					const pts = item.points
+					elements += '<line x1="' + (pts[0] + item.x) + '" y1="' + (pts[1] + item.y) + '" x2="' + (pts[2] + item.x) + '" y2="' + (pts[3] + item.y) + '" stroke="' + item.stroke + '" stroke-width="' + (item.strokeWidth || 3) + '"/>\n'
+					break
+				}
+				case 'fleche': {
+					arrowId++
+					const pts = item.points
+					defs += '<marker id="arrow' + arrowId + '" markerWidth="' + (item.pointerLength || 15) + '" markerHeight="' + (item.pointerWidth || 12) + '" refX="' + (item.pointerLength || 15) + '" refY="' + ((item.pointerWidth || 12) / 2) + '" orient="auto"><polygon points="0 0, ' + (item.pointerLength || 15) + ' ' + ((item.pointerWidth || 12) / 2) + ', 0 ' + (item.pointerWidth || 12) + '" fill="' + item.stroke + '"/></marker>\n'
+					elements += '<line x1="' + (pts[0] + item.x) + '" y1="' + (pts[1] + item.y) + '" x2="' + (pts[2] + item.x) + '" y2="' + (pts[3] + item.y) + '" stroke="' + item.stroke + '" stroke-width="' + (item.strokeWidth || 3) + '" marker-end="url(#arrow' + arrowId + ')"/>\n'
+					break
+				}
+				case 'texte':
+					elements += '<text x="' + item.x + '" y="' + (item.y + (item.fontSize || 30)) + '" fill="' + (item.fill || '#ff0000') + '" font-size="' + (item.fontSize || 30) + '" opacity="' + (item.opacity || 1) + '">' + this.escapeXml(item.text || '') + '</text>\n'
+					break
+				case 'label': {
+					const tagFill = item.tag ? item.tag.fill : '#ffff00'
+					const textContent = item.text ? item.text.text : ''
+					const fontSize = item.text ? item.text.fontSize : 25
+					const textFill = item.text ? item.text.fill : '#000000'
+					const padding = item.text ? item.text.padding : 15
+					const textLen = textContent.length * fontSize * 0.6
+					elements += '<rect x="' + item.x + '" y="' + item.y + '" width="' + (textLen + padding * 2) + '" height="' + (fontSize * 1.5 + padding * 2) + '" fill="' + tagFill + '" rx="3"/>\n'
+					elements += '<text x="' + (item.x + padding) + '" y="' + (item.y + padding + fontSize) + '" fill="' + textFill + '" font-size="' + fontSize + '">' + this.escapeXml(textContent) + '</text>\n'
+					break
+				}
+				}
+			}.bind(this))
+			let svgString = '<?xml version="1.0" encoding="UTF-8"?>\n'
+			svgString += '<svg xmlns="http://www.w3.org/2000/svg" width="' + w + '" height="' + h + '" viewBox="0 0 ' + w + ' ' + h + '">\n'
+			if (defs) {
+				svgString += '<defs>\n' + defs + '</defs>\n'
+			}
+			svgString += elements
+			svgString += '</svg>'
+			const blob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' })
+			saveAs(blob, 'zeichnung_' + Date.now() + '.svg')
+		},
+		escapeXml (str) {
+			return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
+		},
+		geodreieckLocalToScreen (lx, ly, geo) {
+			const cw = geo.baseWidth * geo.scale
+			const ch = geo.baseHeight * geo.scale
+			const cx = cw / 2
+			const cy = ch
+			const rad = geo.rotation * Math.PI / 180
+			const dx = lx * geo.scale - cx
+			const dy = ly * geo.scale - cy
+			return {
+				x: geo.posX + cx + Math.cos(rad) * dx - Math.sin(rad) * dy,
+				y: geo.posY + cy + Math.sin(rad) * dx + Math.cos(rad) * dy
+			}
+		},
+		getGeodreieckEdges () {
+			const geo = this.geodreieckGeometry
+			if (!geo) return []
+			// Local coords of the three edges (baseWidth=640, baseHeight=320)
+			const edges = [
+				{ a: { lx: 0, ly: 320 }, b: { lx: 640, ly: 320 } },   // bottom
+				{ a: { lx: 320, ly: 0 }, b: { lx: 0, ly: 320 } },     // left
+				{ a: { lx: 320, ly: 0 }, b: { lx: 640, ly: 320 } }    // right
+			]
+			return edges.map(function (e) {
+				return {
+					a: this.geodreieckLocalToScreen(e.a.lx, e.a.ly, geo),
+					b: this.geodreieckLocalToScreen(e.b.lx, e.b.ly, geo)
+				}
+			}.bind(this))
+		},
+		projeterSurSegment (px, py, ax, ay, bx, by) {
+			const dx = bx - ax
+			const dy = by - ay
+			const len2 = dx * dx + dy * dy
+			if (len2 === 0) return { x: ax, y: ay, dist: Math.hypot(px - ax, py - ay) }
+			var t = ((px - ax) * dx + (py - ay) * dy) / len2
+			t = Math.max(0, Math.min(1, t))
+			const projX = ax + t * dx
+			const projY = ay + t * dy
+			return { x: projX, y: projY, dist: Math.hypot(px - projX, py - projY) }
+		},
+		snapToEdge (point, edges, threshold) {
+			var best = null
+			var bestDist = threshold + 1
+			for (var i = 0; i < edges.length; i++) {
+				var proj = this.projeterSurSegment(point.x, point.y, edges[i].a.x, edges[i].a.y, edges[i].b.x, edges[i].b.y)
+				if (proj.dist < bestDist) {
+					bestDist = proj.dist
+					best = { x: proj.x, y: proj.y }
+				}
+			}
+			if (bestDist <= threshold) return best
+			return null
+		},
 		desactiverSelecteur () {
 			this.$nextTick(function () {
 				if (document.querySelector('#couleur-annotation')) {
@@ -1313,6 +1602,10 @@ export default {
 #annotation.curseur {
 	pointer-events: none;
 	z-index: 99;
+}
+
+#annotation.gomme {
+	cursor: crosshair;
 }
 
 #annotation.avec-nav {
@@ -1346,6 +1639,16 @@ export default {
 	margin: 5px 0;
 	border-radius: 4px;
     cursor: pointer;
+}
+
+#outils-annotation .outil.drag-handle {
+	cursor: grab;
+	opacity: 0.5;
+	margin-bottom: 2px;
+}
+
+#outils-annotation .outil.drag-handle:active {
+	cursor: grabbing;
 }
 
 #outils-annotation .outil.actif {
@@ -1430,41 +1733,10 @@ export default {
 	border-radius: 50%;
 }
 
-#options .option.noir.actif,
-#options .option .couleur.noir {
-	background: black;
-}
-
-#options .option.blanc.actif,
-#options .option .couleur.blanc {
-	background: white;
-	border: 1px solid #ddd;
-}
-
-#options .option.blanc.actif .couleur.blanc {
-	border: 1px solid transparent;
-	width: 18px;
-	height: 18px;
-}
-
-#options .option.rouge.actif,
-#options .option .couleur.rouge {
-	background: #ff0000;
-}
-
-#options .option.jaune.actif,
-#options .option .couleur.jaune {
-	background: #ffff00;
-}
-
-#options .option.vert.actif,
-#options .option .couleur.vert {
-	background: #00ff00;
-}
-
-#options .option.bleu.actif,
-#options .option .couleur.bleu {
-	background: #04fdff;
+#options .option.actif {
+	outline: 2px solid #46B1E7;
+	outline-offset: 1px;
+	border-radius: 50%;
 }
 
 #options .separateur {

@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" width="1920" height="1080">
+  <rect width="1920" height="1080" fill="#2d5a27"/>
+  <defs>
+    <pattern id="linien" width="1920" height="80" patternUnits="userSpaceOnUse">
+      <line x1="40" y1="80" x2="1880" y2="80" stroke="rgba(255,255,255,0.6)" stroke-width="0.8"/>
+    </pattern>
+  </defs>
+  <rect x="0" y="30" width="1920" height="1050" fill="url(#linien)"/>
+</svg>

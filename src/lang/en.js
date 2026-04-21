@@ -70,6 +70,7 @@ export default {
 	remiseOrdre: 'Reorder',
 	//new modules
 	poll: 'Umfrage',
+	ampel: 'Ampel',
 	heures: 'Hours',
 	minutes: 'Minutes',
 	secondes: 'Seconds',
@@ -120,6 +121,10 @@ export default {
 	exporter: 'Export',
 	importerEcran: 'Import a screen',
 	exporterEcran: 'Export this screen',
+	exporterPDF: 'Export as PDF',
+	logoPersonnalise: 'Custom Logo',
+	logoTeleverser: 'Upload Logo',
+	logoSupprimer: 'Remove Logo',
 	modules: 'Modules',
 	tirageSortTexte: 'Random text drawing',
 	tirageSortImage: 'Random image drawing',
@@ -190,5 +195,15 @@ export default {
 	galerieImages: 'Image Gallery',
 	texteGalerie: 'Images of the gallery',
 	label: 'Label',
-	cstRsInfo: 'This is a customized version of Digiscreen by teacher Richard Scheglmann. More information on:'
+	cstRsInfo: 'This is a customized version of Digiscreen by teacher Richard Scheglmann. More information on:',
+	taschenrechner: 'Calculator',
+	geodreieck: 'Set Square',
+	surligneur: 'Highlighter',
+	gomme: 'Eraser',
+	exporterSVG: 'Export as SVG',
+	orange: 'Orange',
+	violet: 'Purple',
+	marron: 'Brown',
+	rose: 'Pink',
+	snap: 'Snap to edge'
 }

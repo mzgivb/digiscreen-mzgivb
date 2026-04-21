@@ -50,6 +50,24 @@
 						<span @click="modifierFond('./static/img/quadrillage-gris-grand.png')">
 							<img src="@/assets/img/miniatures/quadrillage-gris-grand.png" alt="Quadrillage gris grand" style="border: 1px solid #ddd;">
 						</span>
+						<span @click="modifierFond('./static/img/lineatur-klasse1.png')">
+							<img src="@/assets/img/miniatures/lineatur-klasse1.png" alt="Lineatur 1. Klasse" style="border: 1px solid #ddd;">
+						</span>
+						<span @click="modifierFond('./static/img/millimeterpapier.png')">
+							<img src="@/assets/img/miniatures/millimeterpapier.png" alt="Millimeterpapier" style="border: 1px solid #ddd;">
+						</span>
+						<span @click="modifierFond('./static/img/tafel-lineatur-klasse1.png')">
+							<img src="@/assets/img/miniatures/tafel-lineatur-klasse1.png" alt="Tafel Lineatur 1. Klasse">
+						</span>
+						<span @click="modifierFond('./static/img/tafel-lineatur-klasse2.png')">
+							<img src="@/assets/img/miniatures/tafel-lineatur-klasse2.png" alt="Tafel Lineatur 2. Klasse">
+						</span>
+						<span @click="modifierFond('./static/img/tafel-liniert.png')">
+							<img src="@/assets/img/miniatures/tafel-liniert.png" alt="Tafel liniert">
+						</span>
+						<span @click="modifierFond('./static/img/tafel-karo.png')">
+							<img src="@/assets/img/miniatures/tafel-karo.png" alt="Tafel kariert">
+						</span>
 						<span class="couleur-fond" @click="modifierFond('#46B1E7')" style="background-color: #46B1E7;" />
 						<span class="couleur-fond" @click="modifierFond('#ff2d55')" style="background-color: #ff2d55;" />
 						<span class="couleur-fond" @click="modifierFond('#f7d000')" style="background-color: #f7d000;" />
@@ -88,9 +106,22 @@
 
 					<label>{{ $t('exporter') }}</label>
 					<span role="button" tabindex="0" class="bouton" @click="exporter">{{ $t('exporterEcran') }}</span>
+					<span role="button" tabindex="0" class="bouton" @click="exporterPDF">{{ $t('exporterPDF') }}</span>
 					<label>{{ $t('importer') }}</label>
 					<label for="televerser" class="bouton">{{ $t('importerEcran') }}</label>
 					<input id="televerser" type="file" style="display: none;" accept=".dgb, .dgs" @change="importer">
+
+					<label>{{ $t('logoPersonnalise') }}</label>
+					<div class="logo-upload">
+						<div class="logo-apercu" v-if="$parent.logo">
+							<img :src="$parent.logo" alt="Logo">
+						</div>
+						<div class="logo-actions">
+							<label for="televerser-logo" class="bouton">{{ $t('logoTeleverser') }}</label>
+							<input id="televerser-logo" type="file" style="display: none;" accept="image/*" @change="televerserLogo">
+							<span role="button" tabindex="0" class="bouton bouton-supprimer" @click="supprimerLogo" v-if="$parent.logo">{{ $t('logoSupprimer') }}</span>
+						</div>
+					</div>
 
 					<label>{{ $t('modules') }}</label>
 					<div class="modules">
@@ -278,9 +309,23 @@
 							</label>
 						</div>
 						<div class="module">
+							<span>{{ $t('ampel') }}</span>
+							<label class="interrupteur">
+								<input type="checkbox" value="ampel" :checked="$parent.modules.includes('ampel')" @change="modifierModule">
+								<span class="curseur" />
+							</label>
+						</div>
+						<div class="module">
 							<span>{{ $t('grille') }}</span>
 							<label class="interrupteur">
 								<input type="checkbox" value="grille" :checked="$parent.modules.includes('grille')" @change="modifierModule">
+								<span class="curseur" />
+							</label>
+						</div>
+						<div class="module">
+							<span>{{ $t('taschenrechner') }}</span>
+							<label class="interrupteur">
+								<input type="checkbox" value="taschenrechner" :checked="$parent.modules.includes('taschenrechner')" @change="modifierModule">
 								<span class="curseur" />
 							</label>
 						</div>
@@ -319,6 +364,7 @@
 
 <script>
 import draggable from 'vuedraggable'
+import html2canvas from 'html2canvas'
 
 export default {
 	name: 'MParametres',
@@ -544,6 +590,50 @@ export default {
 			this.$parent.exporter(fichier)
 			this.$parent.fermerMenu()
 		},
+		televerserLogo (event) {
+			const fichier = event.target.files[0]
+			if (!fichier) return
+			const reader = new FileReader()
+			reader.onload = function (e) {
+				const img = new Image()
+				img.src = e.target.result
+				img.onload = function () {
+					let dataURL = e.target.result
+					if (img.width > 400) {
+						const canvas = document.createElement('canvas')
+						const ratio = img.width / img.height
+						canvas.width = 400
+						canvas.height = 400 / ratio
+						canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height)
+						dataURL = canvas.toDataURL('image/png')
+					}
+					this.$parent.logo = dataURL
+					localStorage.setItem('digiscreen_logo', dataURL)
+				}.bind(this)
+			}.bind(this)
+			reader.readAsDataURL(fichier)
+			event.target.value = ''
+		},
+		supprimerLogo () {
+			this.$parent.logo = ''
+			localStorage.removeItem('digiscreen_logo')
+		},
+		exporterPDF () {
+			this.$parent.fermerMenu()
+			this.$nextTick(function () {
+				html2canvas(document.body, { useCORS: true }).then(function (canvas) {
+					const imgData = canvas.toDataURL('image/png')
+					const fenetre = window.open('', '_blank')
+					fenetre.document.write('<html><head><title>Digiscreen PDF</title><style>@media print { @page { size: landscape; margin: 0; } body { margin: 0; } img { width: 100vw; height: 100vh; object-fit: contain; } }</style></head><body>')
+					fenetre.document.write('<img src="' + imgData + '">')
+					fenetre.document.write('</body></html>')
+					fenetre.document.close()
+					fenetre.onload = function () {
+						fenetre.print()
+					}
+				})
+			})
+		},
 		modifierModule (event) {
 			this.$parent.modifierModule(event)
 		}
@@ -687,6 +777,33 @@ export default {
 	margin-bottom: 2rem;
 	width: auto;
 	display: inline-block;
+}
+
+.menu .logo-upload {
+	margin-bottom: 2rem;
+}
+
+.menu .logo-upload .logo-apercu {
+	margin-bottom: 1rem;
+	padding: 1rem;
+	background: #f5f5f5;
+	border-radius: 0.5rem;
+	text-align: center;
+}
+
+.menu .logo-upload .logo-apercu img {
+	max-height: 6rem;
+	max-width: 100%;
+}
+
+.menu .logo-upload .logo-actions {
+	display: flex;
+	gap: 1rem;
+}
+
+.menu .logo-upload .bouton-supprimer {
+	background: #e74c3c;
+	color: #fff;
 }
 
 .menu .modules {

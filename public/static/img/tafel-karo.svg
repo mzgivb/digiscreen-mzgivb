@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" width="1920" height="1080">
+  <rect width="1920" height="1080" fill="#2d5a27"/>
+  <defs>
+    <pattern id="karo" width="40" height="40" patternUnits="userSpaceOnUse">
+      <line x1="40" y1="0" x2="40" y2="40" stroke="rgba(255,255,255,0.35)" stroke-width="0.6"/>
+      <line x1="0" y1="40" x2="40" y2="40" stroke="rgba(255,255,255,0.35)" stroke-width="0.6"/>
+    </pattern>
+  </defs>
+  <rect width="1920" height="1080" fill="url(#karo)"/>
+</svg>

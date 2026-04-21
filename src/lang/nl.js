@@ -70,6 +70,7 @@ export default {
 	remiseOrdre: 'Herschik',
 	//new modules
 	poll: 'Umfrage',
+	ampel: 'Ampel',
 	heures: 'Uren',
 	minutes: 'Minuten',
 	secondes: 'Seconds',
@@ -120,6 +121,10 @@ export default {
 	exporter: 'Exporteer',
 	importerEcran: 'Importeer een scherm',
 	exporterEcran: 'Exporteer dit scherm',
+	exporterPDF: 'Export as PDF',
+	logoPersonnalise: 'Custom Logo',
+	logoTeleverser: 'Upload Logo',
+	logoSupprimer: 'Remove Logo',
 	modules: 'Modules',
 	tirageSortTexte: 'Teksten van tekenen',
 	tirageSortImage: 'Tekenen van beelden',
@@ -190,6 +195,15 @@ export default {
 	galerieImages: 'Afbeeldingen galerij',
 	texteGalerie: 'Galerij afbeeldingen',
 	label: 'Etiket',
-	cstRsInfo: 'This is a customized version of Digiscreen by teacher Richard Scheglmann. More information on:'
-
+	cstRsInfo: 'This is a customized version of Digiscreen by teacher Richard Scheglmann. More information on:',
+	taschenrechner: 'Rekenmachine',
+	geodreieck: 'Geodriehoek',
+	surligneur: 'Markeerstift',
+	gomme: 'Gum',
+	exporterSVG: 'Exporteren als SVG',
+	orange: 'Oranje',
+	violet: 'Paars',
+	marron: 'Bruin',
+	rose: 'Roze',
+	snap: 'Uitlijnen op rand'
 }

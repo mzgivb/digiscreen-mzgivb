@@ -1,5 +1,7 @@
 <template>
 	<main :style="definirFond()">
+		<img :src="logo" alt="Logo" class="logo-mz" :data-html2canvas-ignore="true" v-if="logo" />
+
 		<div id="alerte" v-if="alerte">
 			<div class="conteneur">
 				<span class="marque">Digiscreen by La Digitale</span>
@@ -13,7 +15,9 @@
 			<div class="chargement"><div /><div /><div /><div /><div /><div /><div /><div /><div /></div>
 		</div>
 
-		<annotation :panneaux="panneaux" :annotations="annotations" :largeur="largeur" :hauteur="hauteur" :nav="nav" @fermer="arreterAnnoter" v-if="annotation" />
+		<geodreieck :visible="geodreieck" @update:geometry="geodreieckGeometry = $event" />
+
+		<annotation :panneaux="panneaux" :annotations="annotations" :largeur="largeur" :hauteur="hauteur" :nav="nav" :geodreieck-geometry="geodreieckGeometry" @fermer="arreterAnnoter" v-if="annotation" />
 
 		<div id="grille" :class="grille.couleur + ' grille-' + grille.colonnes" v-if="Object.keys(grille).length > 0">
 			<span v-for="element in (grille.colonnes * grille.lignes)" :key="'element_' + element" />
@@ -122,6 +126,10 @@
 				<span class="icone"><i class="material-icons">hearing</i></span>
 				<span class="titre">{{ $t('volume') }}</span>
 			</div>
+			<div @click="creerPanneau('ampel')" v-if="modules.includes('ampel')" :title="$t('ampel')">
+				<span class="icone"><i class="material-icons">traffic</i></span>
+				<span class="titre">{{ $t('ampel') }}</span>
+			</div>
 			<div @click="creerPanneau('retroaction')" v-if="modules.includes('retroaction') && !retroaction" :title="$t('retroaction')">
 				<span class="icone"><i class="material-icons">thumb_up</i></span>
 				<span class="titre">{{ $t('retroaction') }}</span>
@@ -137,6 +145,14 @@
 			<div @click="reinitialiserGrille" class="actif" v-else-if="modules.includes('grille') && Object.keys(grille).length > 0" :title="$t('grille')">
 				<span class="icone"><i class="material-icons">view_module</i></span>
 				<span class="titre">{{ $t('grille') }}</span>
+			</div>
+			<div @click="creerPanneau('taschenrechner')" v-if="modules.includes('taschenrechner')" :title="$t('taschenrechner')">
+				<span class="icone"><i class="material-icons">calculate</i></span>
+				<span class="titre">{{ $t('taschenrechner') }}</span>
+			</div>
+			<div @click="geodreieck = !geodreieck" :class="{'actif': geodreieck}" :title="$t('geodreieck')">
+				<span class="icone"><i class="material-icons">architecture</i></span>
+				<span class="titre">{{ $t('geodreieck') }}</span>
 			</div>
 			<div class="separateur">
 				<span>|</span>
@@ -201,6 +217,8 @@
 			<PRetroaction :panneau="panneau" :largeurPage="largeur" :hauteurPage="hauteur" :finRedimensionnement="finRedimensionnement" :zIndex="zIndex" :export="exportDonnees" @zIndex="zIndex++" @fermer="fermerPanneau" @export="modifierPanneau" v-else-if="panneau.type === 'retroaction'" :key="panneau.id" />
 			<PSonometre :panneau="panneau" :largeurPage="largeur" :hauteurPage="hauteur" :finRedimensionnement="finRedimensionnement" :zIndex="zIndex" :export="exportDonnees" @zIndex="zIndex++" @fermer="fermerPanneau" @export="modifierPanneau" v-else-if="panneau.type === 'sonometre'" :key="panneau.id" />
 			<PPoll :panneau="panneau" :largeurPage="largeur" :hauteurPage="hauteur" :finRedimensionnement="finRedimensionnement" :zIndex="zIndex" :export="exportDonnees" @zIndex="zIndex++" @fermer="fermerPanneau" @export="modifierPanneau" v-else-if="panneau.type === 'poll'" :key="panneau.id" />
+			<PAmpel :panneau="panneau" :largeurPage="largeur" :hauteurPage="hauteur" :finRedimensionnement="finRedimensionnement" :zIndex="zIndex" :export="exportDonnees" @zIndex="zIndex++" @fermer="fermerPanneau" @export="modifierPanneau" v-else-if="panneau.type === 'ampel'" :key="panneau.id" />
+			<PTaschenrechner :panneau="panneau" :largeurPage="largeur" :hauteurPage="hauteur" :finRedimensionnement="finRedimensionnement" :zIndex="zIndex" :export="exportDonnees" @zIndex="zIndex++" @fermer="fermerPanneau" @export="modifierPanneau" v-else-if="panneau.type === 'taschenrechner'" :key="panneau.id" />
 
 		</template>
 
@@ -254,6 +272,9 @@ import PRetroaction from '@/components/retroaction.vue'
 import PSonometre from '@/components/sonometre.vue'
 //new modules
 import PPoll from '@/components/poll.vue'
+import PAmpel from '@/components/ampel.vue'
+import PTaschenrechner from '@/components/taschenrechner.vue'
+import Geodreieck from '@/components/geodreieck.vue'
 
 import MGrille from '@/components/grille.vue'
 import MInfo from '@/components/info.vue'
@@ -281,6 +302,9 @@ export default {
 		POrdre,
 		//new module
 		PPoll,
+		PAmpel,
+		PTaschenrechner,
+		Geodreieck,
 		PTrous,
 		PTirageTexte,
 		PTirageImage,
@@ -306,7 +330,9 @@ export default {
 			hauteur: 0,
 			pages: [{ fond: './static/img/quadrillage.png', grille: {}, annotations: {}, annotation: false }],
 			page: 1,
-			modules: ['codeqr', 'texte', 'image', 'galerie', 'dessin', 'document', 'audio', 'video', 'lien', 'iframe', 'ordre', 'poll', 'trous', 'tirage-texte', 'tirage-image', 'plateau', 'des', 'groupes', 'chrono', 'rebours', 'horloge', 'calendrier', 'retroaction', 'grille'],
+			modules: ['codeqr', 'texte', 'image', 'galerie', 'dessin', 'document', 'audio', 'video', 'lien', 'iframe', 'ordre', 'poll', 'trous', 'tirage-texte', 'tirage-image', 'plateau', 'des', 'groupes', 'chrono', 'rebours', 'horloge', 'calendrier', 'sonometre', 'retroaction', 'ampel', 'grille', 'taschenrechner'],
+			geodreieck: false,
+			geodreieckGeometry: null,
 			panneaux: [],
 			panneauxPage: [],
 			langue: 'de',
@@ -321,6 +347,7 @@ export default {
 			importTermine: false,
 			retroaction: false,
 			annotation: false,
+			logo: 'static/img/MZ_GIVB_Logo.svg',
 			horloge: '',
 			finRedimensionnement: false,
 			defilement: false,
@@ -402,6 +429,11 @@ export default {
 		//load modules from localStorage
 		if(localStorage.getItem('modules')){
 			this.modules = JSON.parse(localStorage.getItem('modules'));
+		}
+
+		//load custom logo from localStorage
+		if (localStorage.getItem('digiscreen_logo')) {
+			this.logo = localStorage.getItem('digiscreen_logo')
 		}
 
 		this.recupererVoix()
@@ -537,6 +569,8 @@ export default {
 		definirFond () {
 			if (this.fond.substring(0, 1) === '#') {
 				return { 'background-color': this.fond }
+			} else if (this.fond.indexOf('lineatur') !== -1 || this.fond.indexOf('tafel-') !== -1 || this.fond.indexOf('millimeterpapier') !== -1) {
+				return { 'background-image': 'url(' + this.fond + ')', 'background-size': 'cover', 'background-repeat': 'no-repeat', 'background-position': 'center' }
 			} else if (this.fond.split('.').pop() === 'png') {
 				return { 'background-image': 'url(' + this.fond + ')', 'background-size': 'auto', 'background-repeat': 'repeat' }
 			} else {
@@ -626,6 +660,12 @@ export default {
 				break
 			case 'sonometre':
 				this.panneaux.push({ page: this.page, id: id, type: type, mode: '', statut: '', dimensions: {}, contenu: '', w: 40, h: 24, x: largeur - this.$convertirRem(20), y: hauteur - this.$convertirRem(12), z: z })
+				break
+			case 'ampel':
+				this.panneaux.push({ page: this.page, id: id, type: type, mode: '', statut: '', dimensions: {}, contenu: '', w: 16, h: 42, x: largeur - this.$convertirRem(8), y: hauteur - this.$convertirRem(21), z: z })
+				break
+			case 'taschenrechner':
+				this.panneaux.push({ page: this.page, id: id, type: type, mode: '', statut: '', dimensions: {}, contenu: '', w: 30, h: 48, x: largeur - this.$convertirRem(15), y: hauteur - this.$convertirRem(24), z: z })
 				break
 			//new module
 			case 'poll':

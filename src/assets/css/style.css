@@ -381,9 +381,21 @@ nav div:last-child {
 nav .icone {
 	display: block;
 	padding: 0.7rem 0;
-	background: #fff;
-	color: #000;
-	border-radius: 0.7rem;
+	background: linear-gradient(145deg, #ffffff, #e8edf2);
+	color: #37474f;
+	border-radius: 0.9rem;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+	transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+nav div:hover .icone {
+	transform: translateY(-2px);
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+nav div:active .icone {
+	transform: translateY(0);
+	box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.6);
 }
 
 nav .icone i {
@@ -405,7 +417,8 @@ nav .titre {
 
 nav .actif .icone {
 	color: #fff;
-	background: #46B1E7;
+	background: linear-gradient(145deg, #56c1f7, #2a8fd4);
+	box-shadow: 0 2px 8px rgba(46, 150, 220, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3);
 }
 
 nav .separateur {
@@ -1137,4 +1150,15 @@ nav .separateur {
 .linkDecoration{
     text-decoration: underline;
     color: blue;
+}
+
+.logo-mz {
+	position: fixed;
+	top: 0.6rem;
+	right: 0.6rem;
+	height: 7.5rem;
+	width: auto;
+	z-index: 9999;
+	opacity: 0.85;
+	pointer-events: none;
 }
