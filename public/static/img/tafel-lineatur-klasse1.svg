@@ -29,12 +29,10 @@
       <line x1="60" y1="86" x2="1880" y2="86" stroke="rgba(255,255,255,0.7)" stroke-width="0.8"/>
     </g>
   </defs>
-  <use href="#zeile1" transform="translate(20, 30)"/>
-  <use href="#zeile1" transform="translate(20, 158)"/>
-  <use href="#zeile1" transform="translate(20, 286)"/>
-  <use href="#zeile1" transform="translate(20, 414)"/>
-  <use href="#zeile1" transform="translate(20, 542)"/>
-  <use href="#zeile1" transform="translate(20, 670)"/>
-  <use href="#zeile1" transform="translate(20, 798)"/>
-  <use href="#zeile1" transform="translate(20, 926)"/>
+  <use href="#zeile1" transform="translate(20, 45)"/>
+  <use href="#zeile1" transform="translate(20, 217)"/>
+  <use href="#zeile1" transform="translate(20, 389)"/>
+  <use href="#zeile1" transform="translate(20, 561)"/>
+  <use href="#zeile1" transform="translate(20, 733)"/>
+  <use href="#zeile1" transform="translate(20, 905)"/>
 </svg>

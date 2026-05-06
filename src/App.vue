@@ -223,7 +223,7 @@
 		</template>
 
 		<MGrille v-if="modale === 'grille'" />
-		<MInfo v-else-if="modale === 'info'" />
+		<MInfo v-else-if="modale === 'info'" :nutzungszaehler="nutzungszaehler" />
 		<MParametres v-if="menu" />
 
 		<!-- bei mehreren Seiten wird eine Seitennavigation angzeigt. --> 
@@ -283,6 +283,7 @@ import Annotation from '@/components/annotation.vue'
 import html2canvas from 'html2canvas'
 import fscreen from 'fscreen'
 import { saveAs } from 'file-saver'
+import { zaehleNutzung } from '@/utils/nutzungszaehler'
 
 export default {
 	name: 'App',
@@ -352,7 +353,12 @@ export default {
 			finRedimensionnement: false,
 			defilement: false,
 			depart: 0,
-			distance: 0
+			distance: 0,
+			nutzungszaehler: {
+				gesamt: 0,
+				ersteNutzung: '',
+				letzteNutzung: ''
+			}
 		}
 	},
 	computed: {
@@ -425,6 +431,7 @@ export default {
 		}
 		this.$root.$i18n.locale = this.langue
 		document.getElementsByTagName('html')[0].setAttribute('lang', this.langue)
+		this.nutzungszaehler = zaehleNutzung()
 
 		//load modules from localStorage
 		if(localStorage.getItem('modules')){
@@ -570,7 +577,7 @@ export default {
 			if (this.fond.substring(0, 1) === '#') {
 				return { 'background-color': this.fond }
 			} else if (this.fond.indexOf('lineatur') !== -1 || this.fond.indexOf('tafel-') !== -1 || this.fond.indexOf('millimeterpapier') !== -1) {
-				return { 'background-image': 'url(' + this.fond + ')', 'background-size': 'cover', 'background-repeat': 'no-repeat', 'background-position': 'center' }
+				return { 'background-image': 'url(' + this.fond + ')', 'background-size': 'cover', 'background-repeat': 'no-repeat', 'background-position': 'left center' }
 			} else if (this.fond.split('.').pop() === 'png') {
 				return { 'background-image': 'url(' + this.fond + ')', 'background-size': 'auto', 'background-repeat': 'repeat' }
 			} else {
