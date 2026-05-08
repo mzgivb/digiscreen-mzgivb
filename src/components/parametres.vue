@@ -329,6 +329,13 @@
 								<span class="curseur" />
 							</label>
 						</div>
+						<div class="module">
+							<span>{{ $t('matheTauziehen') }}</span>
+							<label class="interrupteur">
+								<input type="checkbox" value="mathe-tauziehen" :checked="$parent.modules.includes('mathe-tauziehen')" @change="modifierModule">
+								<span class="curseur" />
+							</label>
+						</div>
 					</div>
 
 					<label>{{ $t('langue') }}</label>

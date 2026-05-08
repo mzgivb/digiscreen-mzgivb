@@ -150,6 +150,10 @@
 				<span class="icone"><i class="material-icons">calculate</i></span>
 				<span class="titre">{{ $t('taschenrechner') }}</span>
 			</div>
+			<div @click="creerPanneau('mathe-tauziehen')" v-if="modules.includes('mathe-tauziehen')" :title="$t('matheTauziehen')">
+				<span class="icone"><i class="material-icons">sports_kabaddi</i></span>
+				<span class="titre">{{ $t('matheTauziehen') }}</span>
+			</div>
 			<div @click="geodreieck = !geodreieck" :class="{'actif': geodreieck}" :title="$t('geodreieck')">
 				<span class="icone"><i class="material-icons">architecture</i></span>
 				<span class="titre">{{ $t('geodreieck') }}</span>
@@ -219,6 +223,7 @@
 			<PPoll :panneau="panneau" :largeurPage="largeur" :hauteurPage="hauteur" :finRedimensionnement="finRedimensionnement" :zIndex="zIndex" :export="exportDonnees" @zIndex="zIndex++" @fermer="fermerPanneau" @export="modifierPanneau" v-else-if="panneau.type === 'poll'" :key="panneau.id" />
 			<PAmpel :panneau="panneau" :largeurPage="largeur" :hauteurPage="hauteur" :finRedimensionnement="finRedimensionnement" :zIndex="zIndex" :export="exportDonnees" @zIndex="zIndex++" @fermer="fermerPanneau" @export="modifierPanneau" v-else-if="panneau.type === 'ampel'" :key="panneau.id" />
 			<PTaschenrechner :panneau="panneau" :largeurPage="largeur" :hauteurPage="hauteur" :finRedimensionnement="finRedimensionnement" :zIndex="zIndex" :export="exportDonnees" @zIndex="zIndex++" @fermer="fermerPanneau" @export="modifierPanneau" v-else-if="panneau.type === 'taschenrechner'" :key="panneau.id" />
+			<PMatheTauziehen :panneau="panneau" :largeurPage="largeur" :hauteurPage="hauteur" :finRedimensionnement="finRedimensionnement" :zIndex="zIndex" :export="exportDonnees" @zIndex="zIndex++" @fermer="fermerPanneau" @export="modifierPanneau" v-else-if="panneau.type === 'mathe-tauziehen'" :key="panneau.id" />
 
 		</template>
 
@@ -274,6 +279,7 @@ import PSonometre from '@/components/sonometre.vue'
 import PPoll from '@/components/poll.vue'
 import PAmpel from '@/components/ampel.vue'
 import PTaschenrechner from '@/components/taschenrechner.vue'
+import PMatheTauziehen from '@/components/mathe-tauziehen.vue'
 import Geodreieck from '@/components/geodreieck.vue'
 
 import MGrille from '@/components/grille.vue'
@@ -305,6 +311,7 @@ export default {
 		PPoll,
 		PAmpel,
 		PTaschenrechner,
+		PMatheTauziehen,
 		Geodreieck,
 		PTrous,
 		PTirageTexte,
@@ -331,7 +338,7 @@ export default {
 			hauteur: 0,
 			pages: [{ fond: './static/img/quadrillage.png', grille: {}, annotations: {}, annotation: false }],
 			page: 1,
-			modules: ['codeqr', 'texte', 'image', 'galerie', 'dessin', 'document', 'audio', 'video', 'lien', 'iframe', 'ordre', 'poll', 'trous', 'tirage-texte', 'tirage-image', 'plateau', 'des', 'groupes', 'chrono', 'rebours', 'horloge', 'calendrier', 'sonometre', 'retroaction', 'ampel', 'grille', 'taschenrechner'],
+			modules: ['codeqr', 'texte', 'image', 'galerie', 'dessin', 'document', 'audio', 'video', 'lien', 'iframe', 'ordre', 'poll', 'trous', 'tirage-texte', 'tirage-image', 'plateau', 'des', 'groupes', 'chrono', 'rebours', 'horloge', 'calendrier', 'sonometre', 'retroaction', 'ampel', 'grille', 'taschenrechner', 'mathe-tauziehen'],
 			geodreieck: false,
 			geodreieckGeometry: null,
 			panneaux: [],
@@ -673,6 +680,9 @@ export default {
 				break
 			case 'taschenrechner':
 				this.panneaux.push({ page: this.page, id: id, type: type, mode: '', statut: '', dimensions: {}, contenu: '', w: 30, h: 48, x: largeur - this.$convertirRem(15), y: hauteur - this.$convertirRem(24), z: z })
+				break
+			case 'mathe-tauziehen':
+				this.panneaux.push({ page: this.page, id: id, type: type, mode: 'edition', statut: '', dimensions: {}, contenu: '', w: 90, h: 56, x: Math.max(0, largeur / 2 - this.$convertirRem(45)), y: Math.max(0, hauteur / 2 - this.$convertirRem(28)), z: z })
 				break
 			//new module
 			case 'poll':
