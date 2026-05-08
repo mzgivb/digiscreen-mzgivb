@@ -224,5 +224,11 @@ export default {
 	mtSiegerText: 'Geschafft! Wer schafft die nächste Runde?',
 	mtNeuesSpiel: 'Neues Spiel',
 	mtNeuKonfigurieren: 'Neu einstellen',
-	mtHinweisOperation: 'Bitte mindestens eine Rechenart aktivieren.'
+	mtHinweisOperation: 'Bitte mindestens eine Rechenart aktivieren.',
+	neuigkeitenTitel: 'Was ist neu?',
+	neuigkeitenNeu: 'Neu',
+	neuigkeitenBehoben: 'Behoben',
+	neuigkeitenLosLegen: 'Los geht\'s',
+	neuigkeitenMatheTauziehen: 'Zwei-Spieler-Mathespiel direkt am Whiteboard. Wer schneller rechnet, zieht das Seil zu sich.',
+	neuigkeitenAnnotationUndo: 'Annotation: Stift-Werkzeug funktioniert wieder zuverlässig nach „Rückgängig".'
 }

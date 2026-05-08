@@ -224,5 +224,11 @@ export default {
 	mtSiegerText: 'Bravo! Tko će pobijediti u sljedećoj rundi?',
 	mtNeuesSpiel: 'Nova igra',
 	mtNeuKonfigurieren: 'Postavke',
-	mtHinweisOperation: 'Aktivirajte barem jednu operaciju.'
+	mtHinweisOperation: 'Aktivirajte barem jednu operaciju.',
+	neuigkeitenTitel: 'Što je novo?',
+	neuigkeitenNeu: 'Novo',
+	neuigkeitenBehoben: 'Ispravljeno',
+	neuigkeitenLosLegen: 'Krenimo',
+	neuigkeitenMatheTauziehen: 'Matematička igra za dva igrača izravno na ploči. Tko brže odgovori, povlači uže na svoju stranu.',
+	neuigkeitenAnnotationUndo: 'Bilješke: olovka opet pouzdano radi nakon "Poništi".'
 }

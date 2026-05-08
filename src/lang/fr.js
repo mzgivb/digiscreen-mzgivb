@@ -224,5 +224,11 @@ export default {
 	mtSiegerText: 'Bravo ! Qui gagnera le prochain round ?',
 	mtNeuesSpiel: 'Nouvelle partie',
 	mtNeuKonfigurieren: 'Configurer',
-	mtHinweisOperation: 'Activez au moins une opération.'
+	mtHinweisOperation: 'Activez au moins une opération.',
+	neuigkeitenTitel: 'Quoi de neuf ?',
+	neuigkeitenNeu: 'Nouveau',
+	neuigkeitenBehoben: 'Corrigé',
+	neuigkeitenLosLegen: 'C\'est parti',
+	neuigkeitenMatheTauziehen: 'Jeu de maths à deux joueurs directement au tableau. Le plus rapide tire la corde de son côté.',
+	neuigkeitenAnnotationUndo: 'Annotation : l\'outil crayon fonctionne à nouveau après « Annuler ».'
 }

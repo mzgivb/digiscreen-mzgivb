@@ -224,5 +224,11 @@ export default {
 	mtSiegerText: 'Fatto! Chi vince il prossimo round?',
 	mtNeuesSpiel: 'Nuova partita',
 	mtNeuKonfigurieren: 'Configura',
-	mtHinweisOperation: 'Attiva almeno un\'operazione.'
+	mtHinweisOperation: 'Attiva almeno un\'operazione.',
+	neuigkeitenTitel: 'Cosa c\'è di nuovo?',
+	neuigkeitenNeu: 'Novità',
+	neuigkeitenBehoben: 'Corretto',
+	neuigkeitenLosLegen: 'Iniziamo',
+	neuigkeitenMatheTauziehen: 'Gioco matematico per due giocatori direttamente sulla lavagna. Chi risponde più velocemente tira la corda dalla sua parte.',
+	neuigkeitenAnnotationUndo: 'Annotazione: lo strumento matita funziona di nuovo correttamente dopo "Annulla".'
 }

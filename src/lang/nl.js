@@ -224,5 +224,11 @@ export default {
 	mtSiegerText: 'Gelukt! Wie wint de volgende ronde?',
 	mtNeuesSpiel: 'Nieuw spel',
 	mtNeuKonfigurieren: 'Configureren',
-	mtHinweisOperation: 'Activeer ten minste één bewerking.'
+	mtHinweisOperation: 'Activeer ten minste één bewerking.',
+	neuigkeitenTitel: 'Wat is er nieuw?',
+	neuigkeitenNeu: 'Nieuw',
+	neuigkeitenBehoben: 'Opgelost',
+	neuigkeitenLosLegen: 'Aan de slag',
+	neuigkeitenMatheTauziehen: 'Wiskundespel voor twee spelers direct op het bord. Wie sneller antwoordt, trekt het touw naar zich toe.',
+	neuigkeitenAnnotationUndo: 'Annotatie: het potlood werkt weer betrouwbaar na "Ongedaan maken".'
 }

@@ -229,6 +229,7 @@
 
 		<MGrille v-if="modale === 'grille'" />
 		<MInfo v-else-if="modale === 'info'" :nutzungszaehler="nutzungszaehler" />
+		<MNeuigkeiten v-else-if="modale === 'neuigkeiten'" :version="appVersion" />
 		<MParametres v-if="menu" />
 
 		<!-- bei mehreren Seiten wird eine Seitennavigation angzeigt. --> 
@@ -284,6 +285,7 @@ import Geodreieck from '@/components/geodreieck.vue'
 
 import MGrille from '@/components/grille.vue'
 import MInfo from '@/components/info.vue'
+import MNeuigkeiten from '@/components/neuigkeiten.vue'
 import MParametres from '@/components/parametres.vue'
 import Annotation from '@/components/annotation.vue'
 import html2canvas from 'html2canvas'
@@ -327,6 +329,7 @@ export default {
 		PSonometre,
 		MGrille,
 		MInfo,
+		MNeuigkeiten,
 		MParametres,
 		Annotation
 	},
@@ -365,7 +368,8 @@ export default {
 				gesamt: 0,
 				ersteNutzung: '',
 				letzteNutzung: ''
-			}
+			},
+			appVersion: '1.3.1'
 		}
 	},
 	computed: {
@@ -454,6 +458,14 @@ export default {
 		if (window.speechSynthesis.onvoiceschanged !== undefined) {
 			window.speechSynthesis.onvoiceschanged = this.recupererVoix
 		}
+
+		// Neuigkeiten-Modal beim ersten Start einer neuen Version anzeigen
+		this.$nextTick(function () {
+			const gesehen = localStorage.getItem('digiscreen_neuigkeiten_gesehen')
+			if (gesehen !== this.appVersion) {
+				this.ouvrirModale('neuigkeiten')
+			}
+		}.bind(this))
 
 		document.addEventListener('keydown', function (event) {
 			if (event.ctrlKey && event.key === 'k') {

@@ -224,5 +224,11 @@ export default {
 	mtSiegerText: 'Done! Who wins the next round?',
 	mtNeuesSpiel: 'New game',
 	mtNeuKonfigurieren: 'Configure',
-	mtHinweisOperation: 'Please enable at least one operation.'
+	mtHinweisOperation: 'Please enable at least one operation.',
+	neuigkeitenTitel: 'What\'s new?',
+	neuigkeitenNeu: 'New',
+	neuigkeitenBehoben: 'Fixed',
+	neuigkeitenLosLegen: 'Let\'s go',
+	neuigkeitenMatheTauziehen: 'Two-player math game right on the whiteboard. Whoever answers faster pulls the rope.',
+	neuigkeitenAnnotationUndo: 'Annotation: pen tool works reliably again after "Undo".'
 }

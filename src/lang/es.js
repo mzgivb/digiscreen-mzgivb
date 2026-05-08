@@ -224,5 +224,11 @@ export default {
 	mtSiegerText: '¡Hecho! ¿Quién gana la siguiente ronda?',
 	mtNeuesSpiel: 'Nuevo juego',
 	mtNeuKonfigurieren: 'Configurar',
-	mtHinweisOperation: 'Activa al menos una operación.'
+	mtHinweisOperation: 'Activa al menos una operación.',
+	neuigkeitenTitel: '¿Qué hay de nuevo?',
+	neuigkeitenNeu: 'Nuevo',
+	neuigkeitenBehoben: 'Corregido',
+	neuigkeitenLosLegen: 'Empezar',
+	neuigkeitenMatheTauziehen: 'Juego matemático para dos jugadores directamente en la pizarra. Quien responde más rápido tira de la cuerda.',
+	neuigkeitenAnnotationUndo: 'Anotación: la herramienta lápiz vuelve a funcionar correctamente tras "Deshacer".'
 }
