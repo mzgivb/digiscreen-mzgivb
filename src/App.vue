@@ -151,7 +151,7 @@
 				<span class="titre">{{ $t('taschenrechner') }}</span>
 			</div>
 			<div @click="creerPanneau('mathe-tauziehen')" v-if="modules.includes('mathe-tauziehen')" :title="$t('matheTauziehen')">
-				<span class="icone"><i class="material-icons">sports_kabaddi</i></span>
+				<span class="icone"><svg class="icone-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="currentColor" aria-hidden="true"><path d="M2 12 L7 7 L7 11 L17 11 L17 7 L22 12 L17 17 L17 13 L7 13 L7 17 Z"/><circle cx="12" cy="12" r="2.5"/></svg></span>
 				<span class="titre">{{ $t('matheTauziehen') }}</span>
 			</div>
 			<div @click="geodreieck = !geodreieck" :class="{'actif': geodreieck}" :title="$t('geodreieck')">
@@ -369,7 +369,7 @@ export default {
 				ersteNutzung: '',
 				letzteNutzung: ''
 			},
-			appVersion: '1.3.1'
+			appVersion: '1.3.2'
 		}
 	},
 	computed: {

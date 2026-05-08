@@ -403,6 +403,13 @@ nav .icone i {
 	line-height: 1;
 }
 
+nav .icone .icone-svg {
+	width: 2.4rem;
+	height: 2.4rem;
+	display: block;
+	margin: 0 auto;
+}
+
 nav .titre {
 	display: block;
 	margin-top: 0.4rem;
