@@ -375,6 +375,8 @@ export default {
 			}
 			this.activerDeplacement()
 		}
+		this.historique = [JSON.parse(JSON.stringify(this.items))]
+		this.positionHistorique = 0
 		const rect = document.querySelector('#annotation').getBoundingClientRect()
 		this.dimensionsCanva.w = rect.width
 		this.dimensionsCanva.h = rect.height
@@ -976,7 +978,10 @@ export default {
 					this.activerSelecteur()
 				}
 			} else if (this.outilDessiner || this.outilSurligneur) {
-				this.dessin = false
+				if (this.dessin) {
+					this.dessin = false
+					this.enregistrer()
+				}
 			}
 		},
 		dessinerForme (type) {
@@ -1360,29 +1365,36 @@ export default {
 		enregistrer () {
 			this.$parent.pages[this.$parent.page - 1].annotations = { id: this.id, items: this.items }
 			const donnees = JSON.parse(JSON.stringify(this.items))
-			if (!this.historique.includes(donnees)) {
-				this.historique.push(donnees)
-				this.positionHistorique += 1
+			if (this.positionHistorique < this.historique.length - 1) {
+				this.historique = this.historique.slice(0, this.positionHistorique + 1)
 			}
+			this.historique.push(donnees)
+			this.positionHistorique = this.historique.length - 1
 		},
 		defaire () {
-			if (this.positionHistorique === 0) {
+			if (this.positionHistorique <= 0) {
 				return
 			}
 			this.positionHistorique -= 1
 			const donnees = this.historique[this.positionHistorique]
-			this.items = donnees
+			if (!Array.isArray(donnees)) {
+				return
+			}
+			this.items = JSON.parse(JSON.stringify(donnees))
 			this.$nextTick(function () {
 				this.reinitialiserSelection()
 			}.bind(this))
 		},
 		refaire () {
-			if (this.positionHistorique === this.historique.length - 1) {
+			if (this.positionHistorique >= this.historique.length - 1) {
 				return
 			}
 			this.positionHistorique += 1
 			const donnees = this.historique[this.positionHistorique]
-			this.items = donnees
+			if (!Array.isArray(donnees)) {
+				return
+			}
+			this.items = JSON.parse(JSON.stringify(donnees))
 			this.$nextTick(function () {
 				this.reinitialiserSelection()
 			}.bind(this))
