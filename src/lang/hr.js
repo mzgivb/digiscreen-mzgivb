@@ -216,6 +216,10 @@ export default {
 	mtZahlenraum: 'Raspon brojeva',
 	mtAddSubBis: 'Plus/Minus do',
 	mtMulDivBis: 'Puta/Podijeljeno do',
+	mtReihen: 'Tablice množenja (po izboru)',
+	mtReihenAlle: 'Sve',
+	mtReihenKeine: 'Nijedna',
+	mtReihenHinweis: 'Ako su odabrane tablice, koriste se samo one. Inače slobodan raspon.',
 	mtSchritteBisSieg: 'Koraci do pobjede',
 	mtRueckzug: 'Pogrešan odgovor povlači natrag',
 	mtSpielen: 'Igraj',
@@ -230,5 +234,6 @@ export default {
 	neuigkeitenBehoben: 'Ispravljeno',
 	neuigkeitenLosLegen: 'Krenimo',
 	neuigkeitenMatheTauziehen: 'Matematička igra za dva igrača izravno na ploči. Tko brže odgovori, povlači uže na svoju stranu.',
+	neuigkeitenReihen: 'Matematičko potezanje užeta sada podržava pojedinačne tablice množenja — usmjereno vježbanje za početnike.',
 	neuigkeitenAnnotationUndo: 'Bilješke: olovka opet pouzdano radi nakon "Poništi".'
 }

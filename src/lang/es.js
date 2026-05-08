@@ -216,6 +216,10 @@ export default {
 	mtZahlenraum: 'Rango de números',
 	mtAddSubBis: 'Más/Menos hasta',
 	mtMulDivBis: 'Por/Dividido hasta',
+	mtReihen: 'Tablas de multiplicar (opcional)',
+	mtReihenAlle: 'Todas',
+	mtReihenKeine: 'Ninguna',
+	mtReihenHinweis: 'Si se eligen tablas, solo se usan esas tablas. Si no, rango libre.',
 	mtSchritteBisSieg: 'Pasos para ganar',
 	mtRueckzug: 'Respuesta incorrecta retrocede',
 	mtSpielen: 'Jugar',
@@ -230,5 +234,6 @@ export default {
 	neuigkeitenBehoben: 'Corregido',
 	neuigkeitenLosLegen: 'Empezar',
 	neuigkeitenMatheTauziehen: 'Juego matemático para dos jugadores directamente en la pizarra. Quien responde más rápido tira de la cuerda.',
+	neuigkeitenReihen: 'El Sogatira matemático ahora admite tablas individuales — práctica enfocada para principiantes.',
 	neuigkeitenAnnotationUndo: 'Anotación: la herramienta lápiz vuelve a funcionar correctamente tras "Deshacer".'
 }

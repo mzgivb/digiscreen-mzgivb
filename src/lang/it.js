@@ -216,6 +216,10 @@ export default {
 	mtZahlenraum: 'Intervallo di numeri',
 	mtAddSubBis: 'Più/Meno fino a',
 	mtMulDivBis: 'Per/Diviso fino a',
+	mtReihen: 'Tabelline (opzionale)',
+	mtReihenAlle: 'Tutte',
+	mtReihenKeine: 'Nessuna',
+	mtReihenHinweis: 'Se vengono scelte tabelline, solo quelle vengono usate. Altrimenti intervallo libero.',
 	mtSchritteBisSieg: 'Passi per vincere',
 	mtRueckzug: 'Risposta errata fa retrocedere',
 	mtSpielen: 'Gioca',
@@ -230,5 +234,6 @@ export default {
 	neuigkeitenBehoben: 'Corretto',
 	neuigkeitenLosLegen: 'Iniziamo',
 	neuigkeitenMatheTauziehen: 'Gioco matematico per due giocatori direttamente sulla lavagna. Chi risponde più velocemente tira la corda dalla sua parte.',
+	neuigkeitenReihen: 'Il Tiro alla fune matematico ora supporta tabelline singole — esercizio mirato per i principianti.',
 	neuigkeitenAnnotationUndo: 'Annotazione: lo strumento matita funziona di nuovo correttamente dopo "Annulla".'
 }

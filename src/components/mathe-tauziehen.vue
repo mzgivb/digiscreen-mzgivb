@@ -28,6 +28,18 @@
 								<label>{{ $t('mtMulDivBis') }}: <input type="number" min="2" max="20" v-model.number="bereichMulDiv"></label>
 							</div>
 
+							<div v-if="opMultiplikation || opDivision">
+								<div class="mt-config-titel">{{ $t('mtReihen') }}</div>
+								<div class="mt-reihen">
+									<button v-for="r in 10" :key="'reihe'+r" type="button" class="mt-reihe-chip" :class="{'mt-reihe-aktiv': reihen.includes(r)}" @click="reiheUmschalten(r)">{{ r }}</button>
+								</div>
+								<div class="mt-reihen-aktionen">
+									<button type="button" class="mt-reihe-link" @click="reihenAlle">{{ $t('mtReihenAlle') }}</button>
+									<button type="button" class="mt-reihe-link" @click="reihenKeine" v-if="reihen.length > 0">{{ $t('mtReihenKeine') }}</button>
+								</div>
+								<div class="mt-reihen-hinweis">{{ $t('mtReihenHinweis') }}</div>
+							</div>
+
 							<div class="mt-config-titel">{{ $t('mtSchritteBisSieg') }}</div>
 							<div class="mt-row">
 								<input type="number" min="1" max="20" v-model.number="schritteBisSieg">
@@ -140,6 +152,7 @@ export default {
 			opDivision: false,
 			bereichAddSub: 20,
 			bereichMulDiv: 10,
+			reihen: [],
 			schritteBisSieg: 5,
 			rueckzug: false,
 			seilPosition: 0,
@@ -206,6 +219,7 @@ export default {
 			if (typeof c.opDivision === 'boolean') this.opDivision = c.opDivision
 			if (typeof c.bereichAddSub === 'number') this.bereichAddSub = c.bereichAddSub
 			if (typeof c.bereichMulDiv === 'number') this.bereichMulDiv = c.bereichMulDiv
+			if (Array.isArray(c.reihen)) this.reihen = c.reihen.filter(r => Number.isInteger(r) && r >= 1 && r <= 10)
 			if (typeof c.schritteBisSieg === 'number') this.schritteBisSieg = c.schritteBisSieg
 			if (typeof c.rueckzug === 'boolean') this.rueckzug = c.rueckzug
 		}
@@ -223,12 +237,28 @@ export default {
 				opDivision: this.opDivision,
 				bereichAddSub: this.bereichAddSub,
 				bereichMulDiv: this.bereichMulDiv,
+				reihen: this.reihen.slice(),
 				schritteBisSieg: this.schritteBisSieg,
 				rueckzug: this.rueckzug
 			}
 		},
 		zufall (min, max) {
 			return Math.floor(Math.random() * (max - min + 1)) + min
+		},
+		reiheUmschalten (r) {
+			const idx = this.reihen.indexOf(r)
+			if (idx >= 0) {
+				this.reihen.splice(idx, 1)
+			} else {
+				this.reihen.push(r)
+				this.reihen.sort(function (x, y) { return x - y })
+			}
+		},
+		reihenAlle () {
+			this.reihen = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+		},
+		reihenKeine () {
+			this.reihen = []
 		},
 		genererAufgabe (seite) {
 			const ops = this.aktiveOperationen
@@ -255,15 +285,40 @@ export default {
 				frage = a + ' − ' + b
 				break
 			case '*':
-				a = this.zufall(1, maxMD)
-				b = this.zufall(1, maxMD)
+				if (this.reihen.length > 0) {
+					const reihe = this.reihen[this.zufall(0, this.reihen.length - 1)]
+					const x = this.zufall(1, 10)
+					if (this.zufall(0, 1) === 0) {
+						a = reihe
+						b = x
+					} else {
+						a = x
+						b = reihe
+					}
+				} else {
+					a = this.zufall(1, maxMD)
+					b = this.zufall(1, maxMD)
+				}
 				loesung = a * b
 				frage = a + ' × ' + b
 				break
 			case '/':
-				loesung = this.zufall(1, maxMD)
-				b = this.zufall(1, maxMD)
-				a = loesung * b
+				if (this.reihen.length > 0) {
+					const reiheD = this.reihen[this.zufall(0, this.reihen.length - 1)]
+					const xD = this.zufall(1, 10)
+					if (this.zufall(0, 1) === 0) {
+						b = reiheD
+						loesung = xD
+					} else {
+						b = xD
+						loesung = reiheD
+					}
+					a = loesung * b
+				} else {
+					loesung = this.zufall(1, maxMD)
+					b = this.zufall(1, maxMD)
+					a = loesung * b
+				}
 				frage = a + ' ÷ ' + b
 				break
 			}
@@ -425,6 +480,59 @@ export default {
 	color: #c0392b;
 	font-size: 1.3rem;
 	margin-top: 0.8rem;
+}
+
+.mt-reihen {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5rem;
+	margin: 0.4rem 0;
+}
+
+.mt-reihe-chip {
+	background: #fff;
+	border: 2px solid #ccc;
+	color: #1a1a2e;
+	font-size: 1.4rem;
+	font-weight: 700;
+	min-width: 4rem;
+	padding: 0.5rem 0.8rem;
+	border-radius: 0.5rem;
+	cursor: pointer;
+	transition: all 0.1s;
+}
+
+.mt-reihe-chip:hover {
+	border-color: #46B1E7;
+}
+
+.mt-reihe-aktiv {
+	background: #46B1E7;
+	border-color: #46B1E7;
+	color: #fff;
+}
+
+.mt-reihen-aktionen {
+	display: flex;
+	gap: 1rem;
+	margin: 0.4rem 0;
+}
+
+.mt-reihe-link {
+	background: none;
+	border: none;
+	color: #46B1E7;
+	font-size: 1.2rem;
+	cursor: pointer;
+	padding: 0.2rem 0;
+	text-decoration: underline;
+}
+
+.mt-reihen-hinweis {
+	font-size: 1.2rem;
+	color: #777;
+	font-style: italic;
+	margin-top: 0.2rem;
 }
 
 .mt-spiel {

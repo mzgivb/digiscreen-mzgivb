@@ -13,6 +13,9 @@
 							<li>
 								<b>{{ $t('matheTauziehen') }}</b> — {{ $t('neuigkeitenMatheTauziehen') }}
 							</li>
+							<li>
+								<b>{{ $t('mtReihen') }}</b> — {{ $t('neuigkeitenReihen') }}
+							</li>
 						</ul>
 					</section>
 

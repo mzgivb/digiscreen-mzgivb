@@ -216,6 +216,10 @@ export default {
 	mtZahlenraum: 'Number range',
 	mtAddSubBis: 'Plus/Minus up to',
 	mtMulDivBis: 'Times/Divide up to',
+	mtReihen: 'Times tables (optional)',
+	mtReihenAlle: 'All',
+	mtReihenKeine: 'None',
+	mtReihenHinweis: 'If tables are selected, only tasks from those tables. Otherwise free range.',
 	mtSchritteBisSieg: 'Steps to win',
 	mtRueckzug: 'Wrong answer pulls back',
 	mtSpielen: 'Play',
@@ -230,5 +234,6 @@ export default {
 	neuigkeitenBehoben: 'Fixed',
 	neuigkeitenLosLegen: 'Let\'s go',
 	neuigkeitenMatheTauziehen: 'Two-player math game right on the whiteboard. Whoever answers faster pulls the rope.',
+	neuigkeitenReihen: 'Math Tug of War now supports individual times tables — focused practice for early learners.',
 	neuigkeitenAnnotationUndo: 'Annotation: pen tool works reliably again after "Undo".'
 }

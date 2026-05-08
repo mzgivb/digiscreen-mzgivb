@@ -216,6 +216,10 @@ export default {
 	mtZahlenraum: 'Zahlenraum',
 	mtAddSubBis: 'Plus/Minus bis',
 	mtMulDivBis: 'Mal/Geteilt bis',
+	mtReihen: 'Einmaleinsreihen (optional)',
+	mtReihenAlle: 'Alle',
+	mtReihenKeine: 'Keine',
+	mtReihenHinweis: 'Wenn Reihen gewählt sind, kommen nur Aufgaben aus diesen Reihen. Sonst freier Zahlenraum.',
 	mtSchritteBisSieg: 'Schritte bis Sieg',
 	mtRueckzug: 'Falsche Antwort zieht zurück',
 	mtSpielen: 'Spielen',
@@ -230,5 +234,6 @@ export default {
 	neuigkeitenBehoben: 'Behoben',
 	neuigkeitenLosLegen: 'Los geht\'s',
 	neuigkeitenMatheTauziehen: 'Zwei-Spieler-Mathespiel direkt am Whiteboard. Wer schneller rechnet, zieht das Seil zu sich.',
+	neuigkeitenReihen: 'Mathe-Tauziehen unterstützt jetzt einzelne Einmaleinsreihen — gezieltes Üben für Erst- und Zweitklässler.',
 	neuigkeitenAnnotationUndo: 'Annotation: Stift-Werkzeug funktioniert wieder zuverlässig nach „Rückgängig".'
 }

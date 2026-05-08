@@ -216,6 +216,10 @@ export default {
 	mtZahlenraum: 'Getallenbereik',
 	mtAddSubBis: 'Plus/Min tot',
 	mtMulDivBis: 'Maal/Gedeeld tot',
+	mtReihen: 'Tafels (optioneel)',
+	mtReihenAlle: 'Alle',
+	mtReihenKeine: 'Geen',
+	mtReihenHinweis: 'Als tafels gekozen zijn, worden alleen die gebruikt. Anders vrij bereik.',
 	mtSchritteBisSieg: 'Stappen om te winnen',
 	mtRueckzug: 'Fout antwoord trekt terug',
 	mtSpielen: 'Spelen',
@@ -230,5 +234,6 @@ export default {
 	neuigkeitenBehoben: 'Opgelost',
 	neuigkeitenLosLegen: 'Aan de slag',
 	neuigkeitenMatheTauziehen: 'Wiskundespel voor twee spelers direct op het bord. Wie sneller antwoordt, trekt het touw naar zich toe.',
+	neuigkeitenReihen: 'Wiskunde-touwtrekken ondersteunt nu afzonderlijke tafels — gericht oefenen voor beginners.',
 	neuigkeitenAnnotationUndo: 'Annotatie: het potlood werkt weer betrouwbaar na "Ongedaan maken".'
 }

@@ -216,6 +216,10 @@ export default {
 	mtZahlenraum: 'Plage de nombres',
 	mtAddSubBis: 'Plus/Moins jusqu\'à',
 	mtMulDivBis: 'Fois/Divisé jusqu\'à',
+	mtReihen: 'Tables de multiplication (optionnel)',
+	mtReihenAlle: 'Toutes',
+	mtReihenKeine: 'Aucune',
+	mtReihenHinweis: 'Si des tables sont choisies, seules ces tables sont utilisées. Sinon, plage libre.',
 	mtSchritteBisSieg: 'Pas pour gagner',
 	mtRueckzug: 'Mauvaise réponse fait reculer',
 	mtSpielen: 'Jouer',
@@ -230,5 +234,6 @@ export default {
 	neuigkeitenBehoben: 'Corrigé',
 	neuigkeitenLosLegen: 'C\'est parti',
 	neuigkeitenMatheTauziehen: 'Jeu de maths à deux joueurs directement au tableau. Le plus rapide tire la corde de son côté.',
+	neuigkeitenReihen: 'Le Tir à la corde mathématique propose maintenant des tables individuelles — entraînement ciblé pour les débutants.',
 	neuigkeitenAnnotationUndo: 'Annotation : l\'outil crayon fonctionne à nouveau après « Annuler ».'
 }

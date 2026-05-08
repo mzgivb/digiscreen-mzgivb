@@ -369,7 +369,7 @@ export default {
 				ersteNutzung: '',
 				letzteNutzung: ''
 			},
-			appVersion: '1.3.2'
+			appVersion: '1.4.0'
 		}
 	},
 	computed: {
