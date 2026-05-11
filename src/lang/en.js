@@ -201,6 +201,7 @@ export default {
 	geodreieck: 'Set Square',
 	surligneur: 'Highlighter',
 	gomme: 'Eraser',
+	gommePrecision: 'Precision eraser',
 	exporterSVG: 'Export as SVG',
 	orange: 'Orange',
 	violet: 'Purple',

@@ -1,6 +1,6 @@
 <template>
 	<transition-group name="fondu">
-		<div id="annotation" :class="{'curseur': this.outilDeplacer, 'gomme': this.outilGomme, 'avec-nav': nav}" key="canva">
+		<div id="annotation" :class="{'curseur': this.outilDeplacer, 'gomme': this.outilGomme, 'gomme-precision': this.outilGommePrecision, 'avec-nav': nav}" key="canva">
 			<v-stage ref="stage" :config="{width: dimensionsCanva.w, height: dimensionsCanva.h}" @mousedown="selectionnerDebut" @touchstart="selectionnerDebut" @mousemove="selectionnerMouvement" @touchmove="selectionnerMouvement" @mouseup="selectionnerFin" @touchend="selectionnerFin">
 				<v-layer ref="objets">
 					<template v-for="(item, indexItem) in items">
@@ -15,7 +15,7 @@
 							<v-tag :config="item.tag" />
 							<v-text :config="item.text" />
 						</v-label>
-						<v-line :config="item" v-else-if="item.objet === 'dessin' || item.objet === 'surligneur-dessin'" @dragstart="selectionnerObjet" @dragend="deplacerFin" :key="'dessin_' + indexItem" />
+						<v-line :config="item" v-else-if="item.objet === 'dessin' || item.objet === 'surligneur-dessin' || item.objet === 'gomme-dessin'" @dragstart="selectionnerObjet" @dragend="deplacerFin" :key="'dessin_' + indexItem" />
 					</template>
 					<v-rect :config="{name: 'selection', fill: 'rgba(1, 206, 209, 0.2)', visible: selection, x: positionSelectionX, y: positionSelectionY, width: largeurSelection, height: hauteurSelection}" @dragend="deplacerFin" @transformend="redimensionnerFin" />
 					<v-rect :config="{name: 'objet-rectangle', fill: 'transparent', visible: creation && outil === 'rectangle', x: positionObjetX, y: positionObjetY, width: largeurObjet, height: hauteurObjet, stroke: '#ff0000', strokeWidth: 3, dash: [7, 5]}" @dragend="deplacerFin" @transformend="redimensionnerFin" />
@@ -54,7 +54,10 @@
 				<i class="material-icons" style="font-size: 16px;">straighten</i>
 			</span>
 			<span class="outil" :title="$t('gomme')" :class="{'actif': outilGomme}" @click="definirOutilPrincipal('gomme')">
-				<i class="material-icons" style="font-size: 16px;">auto_fix_off</i>
+				<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.24 3.56l4.95 4.94c.78.79.78 2.05 0 2.84L12 20.53a4.008 4.008 0 0 1-5.66 0L2.81 17c-.78-.79-.78-2.05 0-2.84l10.6-10.6c.79-.78 2.05-.78 2.83 0zM4.22 15.58l3.54 3.53c.78.79 2.04.79 2.83 0l3.53-3.53l-6.36-6.36l-3.54 3.53c-.78.79-.78 2.05 0 2.83z"/></svg>
+			</span>
+			<span class="outil" :title="$t('gommePrecision')" :class="{'actif': outilGommePrecision}" @click="definirOutilPrincipal('gommePrecision')">
+				<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="2" fill="currentColor"/></svg>
 			</span>
 			<span class="outil" :title="$t('deplacer')" :class="{'actif': outilDeplacer}" @click="definirOutilPrincipal('deplacer')">
 				<img src="~@/assets/img/pan.png" :alt="$t('deplacer')">
@@ -124,30 +127,30 @@
 					<span class="couleur" :style="{ background: c.hex, border: c.hex === '#ffffff' ? '1px solid #ddd' : 'none' }" />
 				</span>
 			</template>
-			<span class="option icone" v-if="nom !== 'selection'" @click="definirCouleur">
+			<span class="option icone" v-if="nom !== 'selection' && !outilGommePrecision" @click="definirCouleur">
 				<label for="couleur-annotation"><i class="material-icons">colorize</i></label>
 				<input type="color" id="couleur-annotation" :value="couleurSelecteur" :title="$t('selectionnerCouleur')">
 			</span>
-			<span class="separateur" v-if="outilDessiner || outilSurligneur" />
-			<span class="option label-epaisseur" v-if="outilDessiner || outilSurligneur">
+			<span class="separateur" v-if="outilDessiner || outilSurligneur || outilGommePrecision" />
+			<span class="option label-epaisseur" v-if="outilDessiner || outilSurligneur || outilGommePrecision">
 				<span><i class="material-icons">line_weight</i></span>
 			</span>
-			<span class="option epaisseur" :class="{'actif': epaisseurStylo === 2}" @click="modifierEpaisseur(2)" v-if="outilDessiner || outilSurligneur">
+			<span class="option epaisseur" :class="{'actif': epaisseurStylo === 2}" @click="modifierEpaisseur(2)" v-if="outilDessiner || outilSurligneur || outilGommePrecision">
 				<span>2</span>
 			</span>
-			<span class="option epaisseur" :class="{'actif': epaisseurStylo === 5}" @click="modifierEpaisseur(5)" v-if="outilDessiner || outilSurligneur">
+			<span class="option epaisseur" :class="{'actif': epaisseurStylo === 5}" @click="modifierEpaisseur(5)" v-if="outilDessiner || outilSurligneur || outilGommePrecision">
 				<span>5</span>
 			</span>
-			<span class="option epaisseur" :class="{'actif': epaisseurStylo === 10}" @click="modifierEpaisseur(10)" v-if="outilDessiner || outilSurligneur">
+			<span class="option epaisseur" :class="{'actif': epaisseurStylo === 10}" @click="modifierEpaisseur(10)" v-if="outilDessiner || outilSurligneur || outilGommePrecision">
 				<span>10</span>
 			</span>
-			<span class="option epaisseur" :class="{'actif': epaisseurStylo === 20}" @click="modifierEpaisseur(20)" v-if="outilDessiner || outilSurligneur">
+			<span class="option epaisseur" :class="{'actif': epaisseurStylo === 20}" @click="modifierEpaisseur(20)" v-if="outilDessiner || outilSurligneur || outilGommePrecision">
 				<span>20</span>
 			</span>
-			<span class="option epaisseur" :class="{'actif': epaisseurStylo === 40}" @click="modifierEpaisseur(40)" v-if="outilDessiner || outilSurligneur">
+			<span class="option epaisseur" :class="{'actif': epaisseurStylo === 40}" @click="modifierEpaisseur(40)" v-if="outilDessiner || outilSurligneur || outilGommePrecision">
 				<span>40</span>
 			</span>
-			<span class="option epaisseur" :class="{'actif': epaisseurStylo === 80}" @click="modifierEpaisseur(80)" v-if="outilDessiner || outilSurligneur">
+			<span class="option epaisseur" :class="{'actif': epaisseurStylo === 80}" @click="modifierEpaisseur(80)" v-if="outilDessiner || outilSurligneur || outilGommePrecision">
 				<span>80</span>
 			</span>
 			<span class="separateur" v-if="outilSelectionner && nom !== 'selection'" />
@@ -235,6 +238,7 @@ export default {
 			outilDessiner: false,
 			outilSurligneur: false,
 			outilGomme: false,
+			outilGommePrecision: false,
 			couleurs: [
 				{ nom: 'noir', hex: '#000000' },
 				{ nom: 'blanc', hex: '#ffffff' },
@@ -286,6 +290,7 @@ export default {
 		},
 		couleursVisibles () {
 			if (this.nom === 'selection') return []
+			if (this.outilGommePrecision) return []
 			if (this.objet === 'label') {
 				return this.couleurs.filter(c => c.hex !== '#000000' && c.hex !== '#ffffff')
 			}
@@ -356,6 +361,14 @@ export default {
 			}
 			this.reinitialiserSelection()
 		},
+		outilGommePrecision: function (valeur) {
+			if (valeur === true) {
+				this.desactiverDeplacement()
+				this.epaisseurStylo = 20
+			}
+			this.positionStylo = []
+			this.reinitialiserSelection()
+		},
 		outil: function (valeur) {
 			if (valeur === '') {
 				this.activerDeplacement()
@@ -403,6 +416,7 @@ export default {
 			this.outilDessiner = false
 			this.outilSurligneur = false
 			this.outilGomme = false
+			this.outilGommePrecision = false
 			if (type === 'selectionner') {
 				this.outilSelectionner = true
 				this.desactiverSelecteur()
@@ -417,6 +431,9 @@ export default {
 				this.activerSelecteur()
 			} else if (type === 'gomme') {
 				this.outilGomme = true
+				this.desactiverSelecteur()
+			} else if (type === 'gommePrecision') {
+				this.outilGommePrecision = true
 				this.desactiverSelecteur()
 			}
 		},
@@ -882,6 +899,16 @@ export default {
 						this.enregistrer()
 					}
 				}
+			} else if (this.outilGommePrecision) {
+				this.dessin = true
+				this.positionStylo = stage.getPointerPosition()
+				this.id++
+				this.items.push({ name: 'gomm' + this.id, objet: 'gomme-dessin', points: [this.positionStylo.x, this.positionStylo.y], globalCompositeOperation: 'destination-out', stroke: '#000000', strokeWidth: this.epaisseurStylo, hitStrokeWidth: 25, lineJoin: 'round', lineCap: 'round', draggable: false, verrouille: false })
+				this.nom = 'gomm' + this.id
+				this.objet = 'gomme-dessin'
+				this.$nextTick(function () {
+					this.$refs.objets.getNode().getLayer().batchDraw()
+				}.bind(this))
 			}
 		},
 		selectionnerMouvement (event) {
@@ -927,6 +954,14 @@ export default {
 				const item = this.items.find(r => r.name === this.nom)
 				const points = item.points.concat([drawX, drawY])
 				item.points = points
+				this.$refs.objets.getNode().getLayer().batchDraw()
+			} else if (this.outilGommePrecision) {
+				if (!this.dessin) {
+					return
+				}
+				this.positionStylo = stage.getPointerPosition()
+				const item = this.items.find(r => r.name === this.nom)
+				item.points = item.points.concat([this.positionStylo.x, this.positionStylo.y])
 				this.$refs.objets.getNode().getLayer().batchDraw()
 			}
 		},
@@ -977,7 +1012,7 @@ export default {
 					this.dessinerForme(this.outil)
 					this.activerSelecteur()
 				}
-			} else if (this.outilDessiner || this.outilSurligneur) {
+			} else if (this.outilDessiner || this.outilSurligneur || this.outilGommePrecision) {
 				if (this.dessin) {
 					this.dessin = false
 					this.enregistrer()
@@ -1460,6 +1495,7 @@ export default {
 			let arrowId = 0
 			this.items.forEach(function (item) {
 				if (item.objet === 'ancre') return
+				if (item.objet === 'gomme-dessin') return
 				const sx = item.scaleX || 1
 				const sy = item.scaleY || 1
 				switch (item.objet) {
@@ -1617,6 +1653,10 @@ export default {
 }
 
 #annotation.gomme {
+	cursor: crosshair;
+}
+
+#annotation.gomme-precision {
 	cursor: crosshair;
 }
 

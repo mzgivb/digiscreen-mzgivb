@@ -201,6 +201,7 @@ export default {
 	geodreieck: 'Squadra',
 	surligneur: 'Evidenziatore',
 	gomme: 'Gomma',
+	gommePrecision: 'Gomma di precisione',
 	exporterSVG: 'Esporta come SVG',
 	orange: 'Arancione',
 	violet: 'Viola',

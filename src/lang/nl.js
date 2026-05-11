@@ -201,6 +201,7 @@ export default {
 	geodreieck: 'Geodriehoek',
 	surligneur: 'Markeerstift',
 	gomme: 'Gum',
+	gommePrecision: 'Precisiegum',
 	exporterSVG: 'Exporteren als SVG',
 	orange: 'Oranje',
 	violet: 'Paars',

@@ -201,6 +201,7 @@ export default {
 	geodreieck: 'Geodreieck',
 	surligneur: 'Textmarker',
 	gomme: 'Radierer',
+	gommePrecision: 'Präzisionsradierer',
 	exporterSVG: 'Als SVG exportieren',
 	orange: 'Orange',
 	violet: 'Violett',

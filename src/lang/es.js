@@ -201,6 +201,7 @@ export default {
 	geodreieck: 'Escuadra',
 	surligneur: 'Resaltador',
 	gomme: 'Borrador',
+	gommePrecision: 'Borrador de precisión',
 	exporterSVG: 'Exportar como SVG',
 	orange: 'Naranja',
 	violet: 'Violeta',

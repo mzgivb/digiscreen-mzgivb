@@ -201,6 +201,7 @@ export default {
 	geodreieck: 'Geodreieck',
 	surligneur: 'Marker',
 	gomme: 'Gumica',
+	gommePrecision: 'Precizna gumica',
 	exporterSVG: 'Izvezi kao SVG',
 	orange: 'Narančasto',
 	violet: 'Ljubičasto',
